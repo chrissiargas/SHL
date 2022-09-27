@@ -1,0 +1,150 @@
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+a
+            vel   acc_var  acc_DFT_1Hz  acc_DFT_2Hz  acc_DFT_3Hz
+0      1.016204  1.402192   707.738232   580.052355   205.918557
+1      1.002288  0.883113   650.091526   218.017624    18.879882
+2      1.098142  0.616241   263.897900   133.673157   152.109222
+3      1.530014  0.073449    24.895602     6.071540     9.081605
+4      1.266628  0.193575     5.285976     0.029026     0.711012
+...         ...       ...          ...          ...          ...
+89398  0.348714  0.856354   144.700135    17.097293    54.646764
+89399  0.173310  0.226967     8.333897    11.096176    19.990644
+89400  0.361611  1.128689    28.136641   131.811395   125.909201
+89401  0.180306  0.631003     0.044028     7.628844     7.608175
+89402  0.090267  0.046872     1.550612     6.668790    19.377447
+
+[89403 rows x 5 columns]
+       label
+0          3
+1          3
+2          3
+3          3
+4          3
+...      ...
+89398      2
+89399      2
+89400      2
+89401      2
+89402      2
+
+[89403 rows x 1 columns]
+             time
+0     -1516093704
+1     -1516092704
+2     -1516091704
+3     -1516090704
+4     -1516089704
+...           ...
+89398 -1482830974
+89399 -1482829974
+89400 -1482828974
+89401 -1482827974
+89402 -1482826974
+
+[89403 rows x 1 columns]

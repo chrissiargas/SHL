@@ -1,0 +1,1 @@
+Error: E:\SHL\tmpFolder\drop\user1_220617_Bag_location.mmap - Access is denied.

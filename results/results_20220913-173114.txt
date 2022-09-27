@@ -1,0 +1,1 @@
+Error: E:\SHL\tmpFolder\drop\user1_220617_Hand_location.mmap - The system cannot find the file specified.

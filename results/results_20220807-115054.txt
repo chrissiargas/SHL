@@ -1,0 +1,188 @@
+Found Data
+{'accDuration': 1200,
+ 'accStride': 400,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locDuration': 12,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'pairThreshold': 30000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.05,
+ 'smpl_loc_period': 60,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'threshold': 10000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 3,
+ 'accEpochs': 160,
+ 'acc_fusion': 'Frequency',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 3,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk',
+                  'Mean',
+                  'Var',
+                  'Quantile',
+                  'Skewness',
+                  'Kurtosis'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 12,
+ 'pair_threshold': 60000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'none',
+ 'transfer_learning_loc': 'train',
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.4,
+ 'val_size': 2000}
+
+Found Data
+Model: "LocationEncoder"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+input_1 (InputLayer)            [(None, 10, 2)]      0                                            
+__________________________________________________________________________________________________
+maskLayer1 (Masking)            (None, 10, 2)        0           input_1[0][0]                    
+__________________________________________________________________________________________________
+locBatch (BatchNormalization)   (None, 10, 2)        8           maskLayer1[0][0]                 
+__________________________________________________________________________________________________
+locLSTM (LSTM)                  (None, 256)          265216      locBatch[0][0]                   
+__________________________________________________________________________________________________
+dropout (Dropout)               (None, 256)          0           locLSTM[0][0]                    
+__________________________________________________________________________________________________
+input_2 (InputLayer)            [(None, 5)]          0                                            
+__________________________________________________________________________________________________
+tf.concat (TFOpLambda)          (None, 261)          0           dropout[0][0]                    
+                                                                 input_2[0][0]                    
+__________________________________________________________________________________________________
+locDense1 (Dense)               (None, 128)          33536       tf.concat[0][0]                  
+__________________________________________________________________________________________________
+locBatch1 (BatchNormalization)  (None, 128)          512         locDense1[0][0]                  
+__________________________________________________________________________________________________
+mask_relu (MaskRelu)            (None, 128)          0           locBatch1[0][0]                  
+__________________________________________________________________________________________________
+dropout_1 (Dropout)             (None, 128)          0           mask_relu[0][0]                  
+__________________________________________________________________________________________________
+locDense2 (Dense)               (None, 64)           8256        dropout_1[0][0]                  
+__________________________________________________________________________________________________
+locBatch2 (BatchNormalization)  (None, 64)           256         locDense2[0][0]                  
+__________________________________________________________________________________________________
+mask_relu_1 (MaskRelu)          (None, 64)           0           locBatch2[0][0]                  
+__________________________________________________________________________________________________
+dropout_2 (Dropout)             (None, 64)           0           mask_relu_1[0][0]                
+__________________________________________________________________________________________________
+locDense3 (Dense)               (None, 256)          16640       dropout_2[0][0]                  
+__________________________________________________________________________________________________
+locBatch3 (BatchNormalization)  (None, 256)          1024        locDense3[0][0]                  
+__________________________________________________________________________________________________
+mask_relu_2 (MaskRelu)          (None, 256)          0           locBatch3[0][0]                  
+__________________________________________________________________________________________________
+tf.math.equal (TFOpLambda)      (None, 5)            0           input_2[0][0]                    
+__________________________________________________________________________________________________
+dropout_3 (Dropout)             (None, 256)          0           mask_relu_2[0][0]                
+__________________________________________________________________________________________________
+tf.math.reduce_all (TFOpLambda) (None, 1)            0           tf.math.equal[0][0]              
+__________________________________________________________________________________________________
+tf.compat.v1.shape (TFOpLambda) (2,)                 0           tf.math.reduce_all[0][0]         
+__________________________________________________________________________________________________
+tf.zeros_like (TFOpLambda)      (None, 256)          0           dropout_3[0][0]                  
+__________________________________________________________________________________________________
+tf.concat_1 (TFOpLambda)        (2,)                 0           tf.compat.v1.shape[0][0]         
+__________________________________________________________________________________________________
+tf.compat.v1.shape_1 (TFOpLambd (2,)                 0           tf.zeros_like[0][0]              
+__________________________________________________________________________________________________
+tf.math.subtract (TFOpLambda)   (2,)                 0           tf.compat.v1.shape_1[0][0]       
+                                                                 tf.concat_1[0][0]                
+__________________________________________________________________________________________________
+tf.math.greater (TFOpLambda)    (2,)                 0           tf.math.subtract[0][0]           
+__________________________________________________________________________________________________
+tf.ones_like_1 (TFOpLambda)     (2,)                 0           tf.compat.v1.shape_1[0][0]       
+__________________________________________________________________________________________________
+tf.reshape (TFOpLambda)         (None, 1)            0           tf.math.reduce_all[0][0]         
+                                                                 tf.concat_1[0][0]                
+__________________________________________________________________________________________________
+tf.where (TFOpLambda)           (2,)                 0           tf.math.greater[0][0]            
+                                                                 tf.compat.v1.shape_1[0][0]       
+                                                                 tf.ones_like_1[0][0]             
+__________________________________________________________________________________________________
+tf.tile (TFOpLambda)            (None, None)         0           tf.reshape[0][0]                 
+                                                                 tf.where[0][0]                   
+__________________________________________________________________________________________________
+tf.ones_like (TFOpLambda)       (None, 256)          0           dropout_3[0][0]                  
+__________________________________________________________________________________________________
+tf.where_1 (TFOpLambda)         (None, 256)          0           tf.tile[0][0]                    
+                                                                 tf.zeros_like[0][0]              
+                                                                 tf.ones_like[0][0]               
+__________________________________________________________________________________________________
+tf.math.multiply (TFOpLambda)   (None, 256)          0           dropout_3[0][0]                  
+                                                                 tf.where_1[0][0]                 
+__________________________________________________________________________________________________
+dense (Dense)                   (None, 8)            2056        tf.math.multiply[0][0]           
+==================================================================================================
+Total params: 327,504
+Trainable params: 326,604
+Non-trainable params: 900
+__________________________________________________________________________________________________
+None
+Epoch 1/200

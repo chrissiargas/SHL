@@ -1,0 +1,122 @@
+Found Data
+{'accDuration': 3000,
+ 'accStride': 1500,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locDuration': 60,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 30,
+ 'pairThreshold': 30000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'threshold': 10000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 3,
+ 'accEpochs': 160,
+ 'acc_fusion': 'Frequency',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration', 'BearingRate'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 12,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.15,
+ 'val_size': 2000}
+
+           vel_var    mgn_var
+0         0.169986   4.061366
+1         0.285617   2.250221
+2         1.022768   0.988891
+3         0.027117   0.215125
+4         0.009635   0.119664
+...            ...        ...
+3148      8.269524   0.443885
+3149      0.174214  36.402168
+3150      3.647877   0.083598
+3151  14662.209723   0.037828
+3152      0.020352   0.467246
+
+[3153 rows x 2 columns]
+      label
+0         2
+1         4
+2         4
+3         1
+4         1
+...     ...
+3148      5
+3149      3
+3150      7
+3151      7
+3152      1
+
+[3153 rows x 1 columns]

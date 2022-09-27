@@ -1,0 +1,160 @@
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 1200,
+ 'accStride': 400,
+ 'bagging': True,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'hardLabelling': False,
+ 'interpolateGaps': 20,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 12,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 30000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.05,
+ 'smpl_loc_period': 60,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'threshold': 10000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 3,
+ 'accEpochs': 160,
+ 'acc_fusion': 'Frequency',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 12,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'random_tree': False,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.15,
+ 'val_size': 2000}
+
+3 1 1
+Found Data
+Model: "AccelerationEncoder"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         [(None, 192, 48, 1)]      0         
+_________________________________________________________________
+accBatch1 (BatchNormalizatio (None, 192, 48, 1)        4         
+_________________________________________________________________
+zero_padding2d (ZeroPadding2 (None, 194, 50, 1)        0         
+_________________________________________________________________
+accConv1 (Conv2D)            (None, 192, 48, 16)       160       
+_________________________________________________________________
+re_lu (ReLU)                 (None, 192, 48, 16)       0         
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 96, 24, 16)        0         
+_________________________________________________________________
+zero_padding2d_1 (ZeroPaddin (None, 98, 26, 16)        0         
+_________________________________________________________________
+accConv2 (Conv2D)            (None, 96, 24, 32)        4640      
+_________________________________________________________________
+re_lu_1 (ReLU)               (None, 96, 24, 32)        0         
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 48, 12, 32)        0         
+_________________________________________________________________
+accConv3 (Conv2D)            (None, 46, 10, 64)        18496     
+_________________________________________________________________
+re_lu_2 (ReLU)               (None, 46, 10, 64)        0         
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 (None, 23, 5, 64)         0         
+_________________________________________________________________
+flatten (Flatten)            (None, 7360)              0         
+_________________________________________________________________
+dropout (Dropout)            (None, 7360)              0         
+_________________________________________________________________
+accDense1 (Dense)            (None, 128)               942208    
+_________________________________________________________________
+accBatch2 (BatchNormalizatio (None, 128)               512       
+_________________________________________________________________
+re_lu_3 (ReLU)               (None, 128)               0         
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 128)               0         
+_________________________________________________________________
+accDense2 (Dense)            (None, 256)               33024     
+_________________________________________________________________
+accBatch3 (BatchNormalizatio (None, 256)               1024      
+_________________________________________________________________
+re_lu_4 (ReLU)               (None, 256)               0         
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 256)               0         
+_________________________________________________________________
+dense (Dense)                (None, 8)                 2056      
+=================================================================
+Total params: 1,002,124
+Trainable params: 1,001,354
+Non-trainable params: 770
+_________________________________________________________________
+None
+Epoch 1/160

@@ -1,0 +1,163 @@
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+           vel     acc_var   acc_DFT_1Hz  ...    acc_DFT_3Hz  label          time
+0     1.016204    3.463567    673.646789  ...    1179.729191    2.0  1.497427e+12
+1     1.002288    1.346150    687.426559  ...      89.716774    2.0  1.497427e+12
+2     1.098142    1.098626    257.250465  ...     458.931793    2.0  1.497427e+12
+3     1.530014    0.134202     22.162852  ...      45.337006    2.0  1.497427e+12
+4     1.266628    0.012285      0.663703  ...       0.661269    2.0  1.497427e+12
+...        ...         ...           ...  ...            ...    ...           ...
+1135  2.995668  192.698499  12014.631065  ...   84974.440238    2.0  1.497428e+12
+1136  3.050998  216.847646   1400.140769  ...  110203.249520    2.0  1.497428e+12
+1137  3.444385  146.689223   9319.319203  ...   83638.466444    2.0  1.497428e+12
+1138  2.852588  199.969552   5674.425311  ...  123422.808349    2.0  1.497428e+12
+1139  2.893670  221.406592   2283.834906  ...  135700.130834    2.0  1.497428e+12
+
+[1140 rows x 7 columns]
+           vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0     1.016204   2.209989   725.074874  ...    985.856980    2.0  1.497427e+12
+1     1.002288   1.169977   625.693888  ...    129.403663    2.0  1.497427e+12
+2     1.098142   1.022722   154.197803  ...    291.765140    2.0  1.497427e+12
+3     1.530014   0.058164     9.557660  ...     31.238018    2.0  1.497427e+12
+4     1.266628   0.001233     0.084407  ...      0.381340    2.0  1.497427e+12
+...        ...        ...          ...  ...           ...    ...           ...
+1135  2.995668  38.968821  2532.524127  ...  25323.744777    2.0  1.497428e+12
+1136  3.050998  41.449941  1172.402830  ...  30575.931471    2.0  1.497428e+12
+1137  3.444385  36.257026   564.101797  ...  31952.482688    2.0  1.497428e+12
+1138  2.852588  36.575689  2024.695257  ...  25175.142804    2.0  1.497428e+12
+1139  2.893670  42.523990   386.170632  ...  36514.730576    2.0  1.497428e+12
+
+[1140 rows x 7 columns]
+           vel     acc_var  acc_DFT_1Hz  ...    acc_DFT_3Hz  label          time
+0     1.016204    4.372867   756.922319  ...    2171.813054    2.0  1.497427e+12
+1     1.002288    3.963156   689.741483  ...     614.131747    2.0  1.497427e+12
+2     1.098142    1.972747   288.019535  ...     569.145395    2.0  1.497427e+12
+3     1.530014    0.190170     2.084733  ...      88.131207    2.0  1.497427e+12
+4     1.266628    0.076780     0.472583  ...       1.362701    2.0  1.497427e+12
+...        ...         ...          ...  ...            ...    ...           ...
+1135  2.995668  291.823091  8566.918652  ...  101215.043992    2.0  1.497428e+12
+1136  3.050998  220.824761  2366.144479  ...   44067.538784    2.0  1.497428e+12
+1137  3.444385  254.429322  2047.201271  ...   86520.983146    2.0  1.497428e+12
+1138  2.852588  312.331214  6891.175981  ...  112648.517487    2.0  1.497428e+12
+1139  2.893670  265.129886   299.544152  ...  112568.761443    2.0  1.497428e+12
+
+[1140 rows x 7 columns]
+           vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0     1.016204   1.402192   707.738232  ...    205.918557    2.0  1.497427e+12
+1     1.002288   0.883113   650.091526  ...     18.879882    2.0  1.497427e+12
+2     1.098142   0.616241   263.897900  ...    152.109222    2.0  1.497427e+12
+3     1.530014   0.073449    24.895602  ...      9.081605    2.0  1.497427e+12
+4     1.266628   0.193575     5.285976  ...      0.711012    2.0  1.497427e+12
+...        ...        ...          ...  ...           ...    ...           ...
+1135  2.995668  64.858498  4319.238628  ...  50432.119237    2.0  1.497428e+12
+1136  3.050998  53.928227   276.394492  ...  39635.229221    2.0  1.497428e+12
+1137  3.444385  44.530851  3875.366257  ...  35718.705424    2.0  1.497428e+12
+1138  2.852588  57.180832  1636.600927  ...  49154.519927    2.0  1.497428e+12
+1139  2.893670  49.806905   114.647471  ...  41424.280172    2.0  1.497428e+12
+
+[1140 rows x 7 columns]

@@ -1,0 +1,202 @@
+data_args:
+  accDuration: 50
+  accStride: 50
+  day: all   # [all, 1, 2, 3 ]
+
+  dropnan: true
+  dropnull: false
+
+  locDuration: 2 #samples
+  locStride: 1 #samples
+
+  path: E:\SHL\
+
+  position: all # [all , Torso, Hips, Bag, Hand]
+
+  smpl_acc_period: 0.02 #original 0.01s
+  smpl_loc_period: 1 #original 1s
+
+  src_path: E:\SHL\srcData\
+
+  useAccuracy: true
+
+  user: all   #[all, 1 , 2 , 3 ]
+
+
+  sampling: decimation   #[ downsampling , decimation ]
+  decimateTime: false # for decimation
+
+  locSampling: hop   #[ labelBased , window , hop ]
+  interpolationThreshold: true # for locSampling == hop
+  interpolateGaps: 3 # for locSampling == hop and interpolationThreshold == True
+
+  hardLabelling: false
+  labellingThreshold:
+  labelPosition:      #belongs in {0, accDuration - 1}
+
+
+  percentageThreshold: 0.6 #if not hardLabelling
+
+
+  threshold: 1000 #ms
+  dynamicWindow: true
+
+  pairThreshold: 2000 #ms
+  locPosition:      #belongs in {0, locDuration - 1}
+
+  bagging: false
+  accBagSize: 3
+  locBagSize: 1
+  accBagStride: 400
+  locBagStride: 1
+  overlap: true
+  randomStride: false
+  strideRange: [200, 600]
+
+  gpsSignal: false
+train_args:
+
+  accBagSize: 1  #odd
+  accBagPivot:       #belongs between {0, accBagSize - 1}
+
+  locBagSize: 1  #odd
+  locBagPivot:       #belongs between {0, locBagSize - 1}
+
+  containLabel: false
+  intersect: true # if containLabel == False
+  bagStride: 1
+  pair_threshold: 300000
+
+  val_percentage: 0.3         #used if stratify == concentrated
+
+  fusion: MIL    #[MIL, concat]
+
+  spectograms: true
+  FFT: false #if specto false
+
+  positions:
+  - Torso
+  - Hips
+  - Bag
+  - Hand
+
+  #['Torso','Hips','Bag','Hand']
+
+
+  gpsPosition: Hand
+
+  acc_signals:
+  - Acc_x
+  - Acc_y
+  - Acc_z
+  - Acc_norm
+  loc_signals: [Velocity, Acceleration]
+
+  #['Acc','Lat','Long','Alt','GPS','Distance','Velocity','Acceleration','Jerk',Bearing','BearingRate','Sinuosity']
+
+  loc_features:
+  - TotalWalk
+  - Mean
+  - Var
+
+
+    #[TotalDistance, TotalVelocity, TotalWalk, Min, Max, Mean, Var, Quantile, Skewness, Kurtosis]
+  acc_fusion: Frequency
+  #['Depth','Seperate'] for DNN
+  #['Depth','Seperate'] for FFTransform
+  #['Depth','Frequency','Time','Seperate'] for SpectoCNN
+  acc_model: CNN
+  #['ResNet', 'CNN']
+  loc_fusion: LSTM
+
+  #['DNN', 'CNNLSTM', 'LSTM', 'Seperate', 'BidirectionalLSTM', 'FCLSTM']
+
+  val_size: 2000
+  valBatchSize: 32
+
+  trainBatchSize: 32  #better be small for padding_method == variable_length
+
+  testBatchSize: 32
+
+  test_user: 1
+
+  drop_run: false
+
+  loss_function: crossentropy   #[weighted, focal, crossentropy]
+
+  stratify: concentrated   #[label, user&label, hop, concentrated]
+
+
+  highpass_filter: false
+
+  acc_norm_augmentation: []   #['Jittering','Permutation','TimeWarp']
+  acc_norm_aug_params: [] #[stdJittering, stdTimeWarp, nPermutations]
+
+
+
+  acc_xyz_augmentation: []         #['Jittering','Permutation','TimeWarp','Rotation']
+  acc_xyz_aug_params: []
+  specto_aug: [frequencyMask, timeMask]       #[timeWarp, frequencyMask, timeMask]
+
+
+
+  location_noise: true
+  noise_std_factor: 0.5
+
+
+  location_interp_aug: false
+  interp_std_factor: 0.3
+
+
+  haversine_distance: true
+  second_order: true
+
+
+  padding_threshold: 2 #2 for randomTree
+  padding_method: masking #[variableLength, interpolation, masking]
+  interpolation: quadratic   #[linear, quadratic, cubic]
+  nullLoc: masking  #[deactivate, masking]
+
+  mask: -10000000
+
+  use_gated: true
+
+  classifier_layers: true
+
+  seperate_MIL: false
+
+  input_dropout: 0.3
+
+  learning_rate: 0.0001
+
+  epochs: 80
+  accEpochs: 80
+  locEpochs: 200
+  simCLRepochs: 120
+
+  transfer_learning_acc: train #[train, load, none]
+  transfer_learning_loc: none #[train, load, none]
+
+
+  simCLR: none #[train, load, none]
+  simCLR_criterion: augmentation #[position, augmentation]
+  simCLR_finetuning: true
+  finetuning_lr_factor: 0.1
+  dimension: 128
+
+  finetuning: false
+  finetuning_learning_rate: 0.0000006
+  finetuning_epochs: 5
+
+  random_tree: true
+
+  post_processing: true
+  post_processing_method: HMM
+
+  transition_threshold: 200000
+
+
+
+
+
+

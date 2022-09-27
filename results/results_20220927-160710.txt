@@ -1,0 +1,1041 @@
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+a
+             vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0       1.016204  3.463567   673.646789  ...  1179.729191      2  1.497427e+12
+1       1.016204  2.209989   725.074874  ...   985.856980      2  1.497427e+12
+2       1.016204  4.372867   756.922319  ...  2171.813054      2  1.497427e+12
+3       1.016204  1.402192   707.738232  ...   205.918557      2  1.497427e+12
+4       1.002288  1.346150   687.426559  ...    89.716774      2  1.497427e+12
+...          ...       ...          ...  ...          ...    ...           ...
+357607  0.180306  0.631003     0.044028  ...     7.608175      1  1.497461e+12
+357608  0.090267  0.000253     0.107989  ...     0.100322      1  1.497461e+12
+357609  0.090267  0.000390     0.001018  ...     0.002032      1  1.497461e+12
+357610  0.090267  0.001902     0.137112  ...     1.019246      1  1.497461e+12
+357611  0.090267  0.046872     1.550612  ...    19.377447      1  1.497461e+12
+
+[357612 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.437910   0.133121  ...     18.933037  1.498528e+12
+1       1.237770   7.303334  ...    917.233096  1.498811e+12
+2       2.068967  58.710595  ...  25971.011112  1.498768e+12
+3       3.181346   2.465167  ...    409.346139  1.497454e+12
+4      14.049614   0.297741  ...     30.557806  1.499455e+12
+
+[5 rows x 6 columns]
+             vel     acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0       3.297628  125.018515  3368.071623  ...  53819.949309      2  1.497428e+12
+1       3.297628   34.514153  2086.159765  ...  19229.265922      2  1.497428e+12
+2       3.297628  162.450723  9373.084162  ...  52724.310418      2  1.497428e+12
+3       3.297628  102.113471  9506.383749  ...  44848.242381      2  1.497428e+12
+4       2.837501  121.537368  2670.763555  ...  70959.530725      2  1.497428e+12
+...          ...         ...          ...  ...           ...    ...           ...
+102451  2.314080    0.849173    32.939565  ...      3.450117      3  1.497449e+12
+102452  2.548389    0.128159     7.476250  ...      9.709160      3  1.497449e+12
+102453  2.548389    0.879992    31.697472  ...    218.626181      3  1.497449e+12
+102454  2.548389    0.480676     8.085427  ...     11.171127      3  1.497449e+12
+102455  2.548389    0.943074     0.435897  ...     86.516488      3  1.497449e+12
+
+[102456 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.495951   0.028635  ...      4.623136  1.499957e+12
+1       1.379262   8.963805  ...    881.355673  1.498320e+12
+2       2.294129  61.170482  ...  28826.688645  1.498772e+12
+3       2.718238   2.730404  ...    518.110040  1.497448e+12
+4      16.531696   0.279680  ...     29.636509  1.499613e+12
+
+[5 rows x 6 columns]
+              vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0        1.001244  13.620323    10.869234  ...    175.610165      1  1.498121e+12
+1        1.001244  60.691956   404.197371  ...  13939.484829      1  1.498121e+12
+2        1.001244  16.163507   205.457256  ...   2136.045177      1  1.498121e+12
+3        1.001244  11.817611   884.370448  ...    887.666284      1  1.498121e+12
+4        1.303684  11.145364    70.463003  ...     74.398150      1  1.498121e+12
+...           ...        ...          ...  ...           ...    ...           ...
+185003   3.839650   0.011611     0.399119  ...      5.843678      0  1.498587e+12
+185004  18.830126   1.486675  1221.880766  ...      4.901139      0  1.498588e+12
+185005  18.830126   5.434705   797.671717  ...    951.024309      0  1.498588e+12
+185006  18.830126   0.000091     0.043195  ...      0.000333      0  1.498588e+12
+185007  18.830126   5.830638  5417.279329  ...    918.020918      0  1.498588e+12
+
+[185008 rows x 7 columns]
+            vel     acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0      0.392378    0.112302  ...     17.281461  1.498466e+12
+1      1.290344   19.864495  ...   2823.134990  1.498319e+12
+2      2.459922  121.742344  ...  51350.006239  1.498175e+12
+3      4.389874    7.962324  ...    856.934177  1.498518e+12
+4      9.527398    0.474894  ...     44.479592  1.498391e+12
+
+[5 rows x 6 columns]
+0.713347530917582
+0.7029425754561965
+0.7680586785436305
+0.7605130588947505
+0.7737719449969731
+0.7774852979330623
+0.7813337801608579
+0.7785825477817175
+0.778528496065035
+0.780198694110525
+0.7770042376545879
+0.7754313326991266
+0.7757502378275534
+0.7761015739859898
+0.7740584190953904
+0.7743935397388221
+0.7711017901928565
+[(3, 0.7843757320215508), (4, 0.7998067463106114), (5, 0.8613843991567112), (6, 0.8713594128211134), (7, 0.8675529007573983), (8, 0.871876708050285), (9, 0.8760638713203717), (10, 0.8757515421254002), (11, 0.8756051378152573), (12, 0.8718962286249707), (13, 0.8708909190286562), (14, 0.8691535878816272), (15, 0.8681092371359412), (16, 0.8638439915671118), (17, 0.8621261809947685), (18, 0.8601350823768251), (19, 0.8571777153119388)]
+0.7858254778171755
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 2,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+a
+             vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0       1.001244  13.620323    10.869234  ...    175.610165      1  1.498121e+12
+1       1.001244  60.691956   404.197371  ...  13939.484829      1  1.498121e+12
+2       1.001244  16.163507   205.457256  ...   2136.045177      1  1.498121e+12
+3       1.001244  11.817611   884.370448  ...    887.666284      1  1.498121e+12
+4       1.303684  11.145364    70.463003  ...     74.398150      1  1.498121e+12
+...          ...        ...          ...  ...           ...    ...           ...
+304951  0.180306   0.631003     0.044028  ...      7.608175      1  1.497461e+12
+304952  0.090267   0.000253     0.107989  ...      0.100322      1  1.497461e+12
+304953  0.090267   0.000390     0.001018  ...      0.002032      1  1.497461e+12
+304954  0.090267   0.001902     0.137112  ...      1.019246      1  1.497461e+12
+304955  0.090267   0.046872     1.550612  ...     19.377447      1  1.497461e+12
+
+[304956 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.334686   0.127862  ...     21.723541  1.498401e+12
+1       1.197209  11.069961  ...   1546.143054  1.498603e+12
+2       2.019462  68.630594  ...  26714.011703  1.498909e+12
+3       3.554347   4.844883  ...    546.408100  1.498055e+12
+4      12.685790   0.385716  ...     37.615420  1.498535e+12
+
+[5 rows x 6 columns]
+            vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0      4.192821  0.775466    40.559512  ...   346.584940      4  1.498136e+12
+1      4.192821  0.766728     2.448268  ...   204.343883      4  1.498136e+12
+2      4.192821  1.733996   200.524904  ...   482.077679      4  1.498136e+12
+3      4.192821  2.026963   106.605525  ...   382.306898      4  1.498136e+12
+4      2.768364  0.756033    20.388404  ...    53.624160      4  1.498136e+12
+...         ...       ...          ...  ...          ...    ...           ...
+92755  2.314080  0.849173    32.939565  ...     3.450117      3  1.497449e+12
+92756  2.548389  0.128159     7.476250  ...     9.709160      3  1.497449e+12
+92757  2.548389  0.879992    31.697472  ...   218.626181      3  1.497449e+12
+92758  2.548389  0.480676     8.085427  ...    11.171127      3  1.497449e+12
+92759  2.548389  0.943074     0.435897  ...    86.516488      3  1.497449e+12
+
+[92760 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.946273   0.030998  ...      5.629498  1.499436e+12
+1       1.136152  11.496140  ...   1765.714854  1.498727e+12
+2       2.214253  72.293393  ...  30094.916166  1.498894e+12
+3       3.224467   5.663645  ...    721.846836  1.498048e+12
+4      12.795960   0.408711  ...     36.140231  1.498761e+12
+
+[5 rows x 6 columns]
+             vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0       1.016204  3.463567   673.646789  ...  1179.729191      2  1.497427e+12
+1       1.016204  2.209989   725.074874  ...   985.856980      2  1.497427e+12
+2       1.016204  4.372867   756.922319  ...  2171.813054      2  1.497427e+12
+3       1.016204  1.402192   707.738232  ...   205.918557      2  1.497427e+12
+4       1.002288  1.346150   687.426559  ...    89.716774      2  1.497427e+12
+...          ...       ...          ...  ...          ...    ...           ...
+247355  0.153345  0.122665     1.490431  ...     6.879170      0  1.500390e+12
+247356  0.201637  0.027509     2.393721  ...     3.415886      0  1.500390e+12
+247357  0.201637  0.000248     0.016046  ...     0.065613      0  1.500390e+12
+247358  0.201637  0.000231     0.002299  ...     0.001897      0  1.500390e+12
+247359  0.201637  1.418896    84.986731  ...    62.825303      0  1.500390e+12
+
+[247360 rows x 7 columns]
+             vel     acc_var  ...   acc_DFT_3Hz          time
+label                         ...                            
+0       0.502810    0.119102  ...     12.966141  1.498962e+12
+1       1.397911    9.788748  ...   1060.663134  1.498612e+12
+2       2.813694  114.592199  ...  59553.415909  1.497428e+12
+3       3.419976    3.099121  ...    525.108025  1.497453e+12
+4      13.025244    0.298222  ...     32.151962  1.500028e+12
+
+[5 rows x 6 columns]
+0.7820383247089263
+0.7904794631306598
+0.8100582147477361
+0.8104503557567917
+0.8126051099611902
+0.8240984799482536
+0.8246240297542043
+0.8165022639068564
+0.8155360608020699
+0.8136562095730918
+0.8076730271668823
+0.8058336028460543
+0.8051503880983183
+0.8005578913324709
+0.7963373221216041
+0.7944938551099612
+0.7923108020698577
+[(3, 0.7504851228978008), (4, 0.8233505821474774), (5, 0.8404161276412246), (6, 0.8399956877964639), (7, 0.8662354463130659), (8, 0.8698792583009918), (9, 0.8764769297110824), (10, 0.8791936179387667), (11, 0.8771021992238034), (12, 0.8746981457524795), (13, 0.8725959465286761), (14, 0.8713777490297542), (15, 0.8680357912893488), (16, 0.8635079775765416), (17, 0.8596701164294954), (18, 0.858721431651574), (19, 0.8534928848641656)]
+0.8169429172056921
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 3,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+a
+             vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0       1.001244  13.620323    10.869234  ...    175.610165      1  1.498121e+12
+1       1.001244  60.691956   404.197371  ...  13939.484829      1  1.498121e+12
+2       1.001244  16.163507   205.457256  ...   2136.045177      1  1.498121e+12
+3       1.001244  11.817611   884.370448  ...    887.666284      1  1.498121e+12
+4       1.303684  11.145364    70.463003  ...     74.398150      1  1.498121e+12
+...          ...        ...          ...  ...           ...    ...           ...
+325867  0.153345   0.122665     1.490431  ...      6.879170      0  1.500390e+12
+325868  0.201637   0.027509     2.393721  ...      3.415886      0  1.500390e+12
+325869  0.201637   0.000248     0.016046  ...      0.065613      0  1.500390e+12
+325870  0.201637   0.000231     0.002299  ...      0.001897      0  1.500390e+12
+325871  0.201637   1.418896    84.986731  ...     62.825303      0  1.500390e+12
+
+[325872 rows x 7 columns]
+             vel     acc_var  ...   acc_DFT_3Hz          time
+label                         ...                            
+0       0.544116    0.132439  ...     15.112448  1.498658e+12
+1       1.362468   13.493474  ...   1739.822159  1.498716e+12
+2       2.570466  122.376220  ...  56021.573136  1.497877e+12
+3       3.852232    4.705562  ...    591.033058  1.497857e+12
+4      10.796921    0.385692  ...     38.904910  1.499217e+12
+
+[5 rows x 6 columns]
+             vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0       4.192821  0.775466    40.559512  ...   346.584940      4  1.498136e+12
+1       4.192821  0.766728     2.448268  ...   204.343883      4  1.498136e+12
+2       4.192821  1.733996   200.524904  ...   482.077679      4  1.498136e+12
+3       4.192821  2.026963   106.605525  ...   382.306898      4  1.498136e+12
+4       2.768364  0.756033    20.388404  ...    53.624160      4  1.498136e+12
+...          ...       ...          ...  ...          ...    ...           ...
+106491  0.004644  0.000173     0.011933  ...     0.002109      0  1.500390e+12
+106492  0.007052  0.011115     0.089710  ...     1.885767      0  1.500390e+12
+106493  0.007052  0.000493     0.072896  ...     0.028754      0  1.500390e+12
+106494  0.007052  0.000215     0.002202  ...     0.032098      0  1.500390e+12
+106495  0.007052  0.000146     0.006576  ...     0.019469      0  1.500390e+12
+
+[106496 rows x 7 columns]
+             vel     acc_var  ...   acc_DFT_3Hz          time
+label                         ...                            
+0       0.122468    0.026675  ...      3.788491  1.500389e+12
+1       1.339559   13.955998  ...   1684.603359  1.497779e+12
+2       2.687580  109.892072  ...  51300.540501  1.497857e+12
+3       3.619540    5.508811  ...    799.259267  1.497849e+12
+4      12.479809    0.395109  ...     37.116561  1.499134e+12
+
+[5 rows x 6 columns]
+             vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0       0.662080  2.158360    47.060995  ...   106.548325      1  1.499074e+12
+1       0.662080  9.963833   184.894859  ...   840.524570      1  1.499074e+12
+2       0.662080  4.139393   127.638758  ...   203.728889      1  1.499074e+12
+3       0.662080  2.407775  1119.066607  ...   684.865274      1  1.499074e+12
+4       1.872851  3.614797    22.303561  ...   180.882795      1  1.499074e+12
+...          ...       ...          ...  ...          ...    ...           ...
+212703  0.180306  0.631003     0.044028  ...     7.608175      1  1.497461e+12
+212704  0.090267  0.000253     0.107989  ...     0.100322      1  1.497461e+12
+212705  0.090267  0.000390     0.001018  ...     0.002032      1  1.497461e+12
+212706  0.090267  0.001902     0.137112  ...     1.019246      1  1.497461e+12
+212707  0.090267  0.046872     1.550612  ...    19.377447      1  1.497461e+12
+
+[212708 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.395991   0.119081  ...     20.532989  1.498510e+12
+1       1.109158   5.099147  ...    738.853431  1.498847e+12
+2       1.798535  32.307166  ...  10686.816727  1.499428e+12
+3       2.259277   1.349867  ...    259.515682  1.497451e+12
+4      16.737397   0.286665  ...     28.083508  1.498849e+12
+
+[5 rows x 6 columns]
+0.6250728698497471
+0.7396524813359159
+0.7407619835643229
+0.7411898001015477
+0.8114316339770954
+0.7908212197002463
+0.8020431765612953
+0.7973042856874213
+0.79365139063881
+0.7968999755533407
+0.7948267107960209
+0.7955883182578934
+0.7883342422475882
+0.7861575493164338
+0.7799612614476183
+0.7742209977998007
+0.7729093405043533
+[(3, 0.8587083082932693), (4, 0.8890380859375), (5, 0.8953951322115384), (6, 0.8984375), (7, 0.8825965294471154), (8, 0.8960993840144231), (9, 0.8969163161057693), (10, 0.8967942457932693), (11, 0.8968693659855769), (12, 0.8948880709134616), (13, 0.892578125), (14, 0.8897047776442307), (15, 0.8843712439903846), (16, 0.8821927584134616), (17, 0.8775259164663461), (18, 0.8734506460336539), (19, 0.8708777794471154)]
+0.740517516971623
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 1,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+a
+             vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0       1.016204  3.463567   673.646789  ...  1179.729191      2  1.497427e+12
+1       1.016204  2.209989   725.074874  ...   985.856980      2  1.497427e+12
+2       1.016204  4.372867   756.922319  ...  2171.813054      2  1.497427e+12
+3       1.016204  1.402192   707.738232  ...   205.918557      2  1.497427e+12
+4       1.002288  1.346150   687.426559  ...    89.716774      2  1.497427e+12
+...          ...       ...          ...  ...          ...    ...           ...
+357607  0.180306  0.631003     0.044028  ...     7.608175      1  1.497461e+12
+357608  0.090267  0.000253     0.107989  ...     0.100322      1  1.497461e+12
+357609  0.090267  0.000390     0.001018  ...     0.002032      1  1.497461e+12
+357610  0.090267  0.001902     0.137112  ...     1.019246      1  1.497461e+12
+357611  0.090267  0.046872     1.550612  ...    19.377447      1  1.497461e+12
+
+[357612 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.437910   0.133121  ...     18.933037  1.498528e+12
+1       1.237770   7.303334  ...    917.233096  1.498811e+12
+2       2.068967  58.710595  ...  25971.011112  1.498768e+12
+3       3.181346   2.465167  ...    409.346139  1.497454e+12
+4      14.049614   0.297741  ...     30.557806  1.499455e+12
+
+[5 rows x 6 columns]
+             vel     acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0       3.297628  125.018515  3368.071623  ...  53819.949309      2  1.497428e+12
+1       3.297628   34.514153  2086.159765  ...  19229.265922      2  1.497428e+12
+2       3.297628  162.450723  9373.084162  ...  52724.310418      2  1.497428e+12
+3       3.297628  102.113471  9506.383749  ...  44848.242381      2  1.497428e+12
+4       2.837501  121.537368  2670.763555  ...  70959.530725      2  1.497428e+12
+...          ...         ...          ...  ...           ...    ...           ...
+102451  2.314080    0.849173    32.939565  ...      3.450117      3  1.497449e+12
+102452  2.548389    0.128159     7.476250  ...      9.709160      3  1.497449e+12
+102453  2.548389    0.879992    31.697472  ...    218.626181      3  1.497449e+12
+102454  2.548389    0.480676     8.085427  ...     11.171127      3  1.497449e+12
+102455  2.548389    0.943074     0.435897  ...     86.516488      3  1.497449e+12
+
+[102456 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.495951   0.028635  ...      4.623136  1.499957e+12
+1       1.379262   8.963805  ...    881.355673  1.498320e+12
+2       2.294129  61.170482  ...  28826.688645  1.498772e+12
+3       2.718238   2.730404  ...    518.110040  1.497448e+12
+4      16.531696   0.279680  ...     29.636509  1.499613e+12
+
+[5 rows x 6 columns]
+              vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0        1.001244  13.620323    10.869234  ...    175.610165      1  1.498121e+12
+1        1.001244  60.691956   404.197371  ...  13939.484829      1  1.498121e+12
+2        1.001244  16.163507   205.457256  ...   2136.045177      1  1.498121e+12
+3        1.001244  11.817611   884.370448  ...    887.666284      1  1.498121e+12
+4        1.303684  11.145364    70.463003  ...     74.398150      1  1.498121e+12
+...           ...        ...          ...  ...           ...    ...           ...
+185003   3.839650   0.011611     0.399119  ...      5.843678      0  1.498587e+12
+185004  18.830126   1.486675  1221.880766  ...      4.901139      0  1.498588e+12
+185005  18.830126   5.434705   797.671717  ...    951.024309      0  1.498588e+12
+185006  18.830126   0.000091     0.043195  ...      0.000333      0  1.498588e+12
+185007  18.830126   5.830638  5417.279329  ...    918.020918      0  1.498588e+12
+
+[185008 rows x 7 columns]
+            vel     acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0      0.392378    0.112302  ...     17.281461  1.498466e+12
+1      1.290344   19.864495  ...   2823.134990  1.498319e+12
+2      2.459922  121.742344  ...  51350.006239  1.498175e+12
+3      4.389874    7.962324  ...    856.934177  1.498518e+12
+4      9.527398    0.474894  ...     44.479592  1.498391e+12
+
+[5 rows x 6 columns]
+0.713347530917582
+0.7029425754561965
+0.7680586785436305
+0.7605130588947505
+0.7737881605119779
+0.7777069099714607
+0.7822040127994465
+0.7790582028885238
+0.7782420219666176
+0.7807878578223645
+0.7776042117097639
+0.7755232206174868
+0.7773231427830148
+0.7758853671192597
+0.7740908501254
+0.7742367897604427
+0.7721720141831705
+[(3, 0.7843757320215508), (4, 0.7998067463106114), (5, 0.8613843991567112), (6, 0.8713594128211134), (7, 0.8675529007573983), (8, 0.8718474271882565), (9, 0.8760248301710002), (10, 0.8757027406886859), (11, 0.8755270555165144), (12, 0.8719255094869993), (13, 0.8709690013273991), (14, 0.869241430467713), (15, 0.8683727648941985), (16, 0.8635414226594831), (17, 0.8619407355352542), (18, 0.8603302881236824), (19, 0.8579292574373389)]
+0.7859335812505405
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 'gpsPosition': 'Hand',
+ 'haversine_distance': True,
+ 'highpass_filter': False,
+ 'input_dropout': 0.3,
+ 'interp_std_factor': 0.3,
+ 'interpolation': 'quadratic',
+ 'intersect': True,
+ 'learning_rate': 0.0001,
+ 'locBagPivot': None,
+ 'locBagSize': 1,
+ 'locEpochs': 200,
+ 'loc_features': ['TotalWalk', 'Mean', 'Var'],
+ 'loc_fusion': 'LSTM',
+ 'loc_signals': ['Velocity', 'Acceleration'],
+ 'location_interp_aug': False,
+ 'location_noise': True,
+ 'loss_function': 'crossentropy',
+ 'mask': -10000000,
+ 'noise_std_factor': 0.5,
+ 'nullLoc': 'masking',
+ 'padding_method': 'masking',
+ 'padding_threshold': 2,
+ 'pair_threshold': 300000,
+ 'positions': ['Torso', 'Hips', 'Bag', 'Hand'],
+ 'post_processing': True,
+ 'post_processing_method': 'HMM',
+ 'random_tree': True,
+ 'second_order': True,
+ 'seperate_MIL': False,
+ 'simCLR': 'none',
+ 'simCLR_criterion': 'augmentation',
+ 'simCLR_finetuning': True,
+ 'simCLRepochs': 120,
+ 'specto_aug': ['frequencyMask', 'timeMask'],
+ 'spectograms': True,
+ 'stratify': 'concentrated',
+ 'testBatchSize': 32,
+ 'test_user': 2,
+ 'trainBatchSize': 32,
+ 'transfer_learning_acc': 'train',
+ 'transfer_learning_loc': 'none',
+ 'transition_threshold': 200000,
+ 'use_gated': True,
+ 'valBatchSize': 32,
+ 'val_percentage': 0.3,
+ 'val_size': 2000}
+
+a
+             vel    acc_var  acc_DFT_1Hz  ...   acc_DFT_3Hz  label          time
+0       1.001244  13.620323    10.869234  ...    175.610165      1  1.498121e+12
+1       1.001244  60.691956   404.197371  ...  13939.484829      1  1.498121e+12
+2       1.001244  16.163507   205.457256  ...   2136.045177      1  1.498121e+12
+3       1.001244  11.817611   884.370448  ...    887.666284      1  1.498121e+12
+4       1.303684  11.145364    70.463003  ...     74.398150      1  1.498121e+12
+...          ...        ...          ...  ...           ...    ...           ...
+304951  0.180306   0.631003     0.044028  ...      7.608175      1  1.497461e+12
+304952  0.090267   0.000253     0.107989  ...      0.100322      1  1.497461e+12
+304953  0.090267   0.000390     0.001018  ...      0.002032      1  1.497461e+12
+304954  0.090267   0.001902     0.137112  ...      1.019246      1  1.497461e+12
+304955  0.090267   0.046872     1.550612  ...     19.377447      1  1.497461e+12
+
+[304956 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.334686   0.127862  ...     21.723541  1.498401e+12
+1       1.197209  11.069961  ...   1546.143054  1.498603e+12
+2       2.019462  68.630594  ...  26714.011703  1.498909e+12
+3       3.554347   4.844883  ...    546.408100  1.498055e+12
+4      12.685790   0.385716  ...     37.615420  1.498535e+12
+
+[5 rows x 6 columns]
+            vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0      4.192821  0.775466    40.559512  ...   346.584940      4  1.498136e+12
+1      4.192821  0.766728     2.448268  ...   204.343883      4  1.498136e+12
+2      4.192821  1.733996   200.524904  ...   482.077679      4  1.498136e+12
+3      4.192821  2.026963   106.605525  ...   382.306898      4  1.498136e+12
+4      2.768364  0.756033    20.388404  ...    53.624160      4  1.498136e+12
+...         ...       ...          ...  ...          ...    ...           ...
+92755  2.314080  0.849173    32.939565  ...     3.450117      3  1.497449e+12
+92756  2.548389  0.128159     7.476250  ...     9.709160      3  1.497449e+12
+92757  2.548389  0.879992    31.697472  ...   218.626181      3  1.497449e+12
+92758  2.548389  0.480676     8.085427  ...    11.171127      3  1.497449e+12
+92759  2.548389  0.943074     0.435897  ...    86.516488      3  1.497449e+12
+
+[92760 rows x 7 columns]
+             vel    acc_var  ...   acc_DFT_3Hz          time
+label                        ...                            
+0       0.946273   0.030998  ...      5.629498  1.499436e+12
+1       1.136152  11.496140  ...   1765.714854  1.498727e+12
+2       2.214253  72.293393  ...  30094.916166  1.498894e+12
+3       3.224467   5.663645  ...    721.846836  1.498048e+12
+4      12.795960   0.408711  ...     36.140231  1.498761e+12
+
+[5 rows x 6 columns]
+             vel   acc_var  acc_DFT_1Hz  ...  acc_DFT_3Hz  label          time
+0       1.016204  3.463567   673.646789  ...  1179.729191      2  1.497427e+12
+1       1.016204  2.209989   725.074874  ...   985.856980      2  1.497427e+12
+2       1.016204  4.372867   756.922319  ...  2171.813054      2  1.497427e+12
+3       1.016204  1.402192   707.738232  ...   205.918557      2  1.497427e+12
+4       1.002288  1.346150   687.426559  ...    89.716774      2  1.497427e+12
+...          ...       ...          ...  ...          ...    ...           ...
+247355  0.153345  0.122665     1.490431  ...     6.879170      0  1.500390e+12
+247356  0.201637  0.027509     2.393721  ...     3.415886      0  1.500390e+12
+247357  0.201637  0.000248     0.016046  ...     0.065613      0  1.500390e+12
+247358  0.201637  0.000231     0.002299  ...     0.001897      0  1.500390e+12
+247359  0.201637  1.418896    84.986731  ...    62.825303      0  1.500390e+12
+
+[247360 rows x 7 columns]
+             vel     acc_var  ...   acc_DFT_3Hz          time
+label                         ...                            
+0       0.502810    0.119102  ...     12.966141  1.498962e+12
+1       1.397911    9.788748  ...   1060.663134  1.498612e+12
+2       2.813694  114.592199  ...  59553.415909  1.497428e+12
+3       3.419976    3.099121  ...    525.108025  1.497453e+12
+4      13.025244    0.298222  ...     32.151962  1.500028e+12
+
+[5 rows x 6 columns]
+0.7820383247089263
+0.7904794631306598
+0.8100582147477361
+0.8104503557567917
+0.8126051099611902
+0.8240984799482536
+0.8246280724450195
+0.8165548188874515
+0.8153945666235446
+0.8134823738680466
+0.8072768434670117
+0.8056557244501941
+0.8045439844760672
+0.8005498059508409
+0.7971377749029754
+0.7945706662354464
+0.7929859314359637
+[(3, 0.7504851228978008), (4, 0.8233505821474774), (5, 0.8404161276412246), (6, 0.8399956877964639), (7, 0.8662354463130659), (8, 0.8698684777921518), (9, 0.8766062958171625), (10, 0.8792151789564467), (11, 0.8772854678740837), (12, 0.8744825355756791), (13, 0.8723911168607158), (14, 0.871248382923674), (15, 0.8681651573954291), (16, 0.8634864165588616), (17, 0.8590771884432945), (18, 0.8589262613195343), (19, 0.8534605433376455)]
+0.8169429172056921
+Found Data
+{'accBagSize': 3,
+ 'accBagStride': 400,
+ 'accDuration': 50,
+ 'accStride': 50,
+ 'bagging': False,
+ 'day': 'all',
+ 'decimateTime': False,
+ 'dropnan': True,
+ 'dropnull': False,
+ 'dynamicWindow': True,
+ 'gpsSignal': False,
+ 'hardLabelling': False,
+ 'interpolateGaps': 3,
+ 'interpolationThreshold': True,
+ 'labelPosition': None,
+ 'labellingThreshold': None,
+ 'locBagSize': 1,
+ 'locBagStride': 1,
+ 'locDuration': 2,
+ 'locPosition': None,
+ 'locSampling': 'hop',
+ 'locStride': 1,
+ 'overlap': True,
+ 'pairThreshold': 2000,
+ 'path': 'E:\\SHL\\',
+ 'percentageThreshold': 0.6,
+ 'position': 'all',
+ 'randomStride': False,
+ 'sampling': 'decimation',
+ 'smpl_acc_period': 0.02,
+ 'smpl_loc_period': 1,
+ 'src_path': 'E:\\SHL\\srcData\\',
+ 'strideRange': [200, 600],
+ 'threshold': 1000,
+ 'useAccuracy': True,
+ 'user': 'all'}
+
+{'FFT': False,
+ 'accBagPivot': None,
+ 'accBagSize': 1,
+ 'accEpochs': 80,
+ 'acc_fusion': 'Frequency',
+ 'acc_model': 'CNN',
+ 'acc_norm_aug_params': [],
+ 'acc_norm_augmentation': [],
+ 'acc_signals': ['Acc_x', 'Acc_y', 'Acc_z', 'Acc_norm'],
+ 'acc_xyz_aug_params': [],
+ 'acc_xyz_augmentation': [],
+ 'bagStride': 1,
+ 'classifier_layers': True,
+ 'containLabel': False,
+ 'dimension': 128,
+ 'drop_run': False,
+ 'epochs': 80,
+ 'finetuning': False,
+ 'finetuning_epochs': 5,
+ 'finetuning_learning_rate': 6e-07,
+ 'finetuning_lr_factor': 0.1,
+ 'fusion': 'MIL',
+ 
