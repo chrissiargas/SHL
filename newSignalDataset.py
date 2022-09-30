@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 import pandas as pd
+import sklearn.metrics
 
 from configParser import Parser
 from extractData import extractData
@@ -813,6 +814,8 @@ class SignalsDataset:
 
                 transition_mx["sum"] = transition_mx.sum(axis=1)
                 transition_mx = transition_mx.div(transition_mx["sum"], axis=0)
+                transition_mx = transition_mx.drop(columns = ['sum'])
+                transition_mx = transition_mx.values.tolist()
 
                 return split_data, split_lbs, transition_mx
 
@@ -1286,9 +1289,9 @@ class SignalsDataset:
 
 
 
-    def get_seq_lbs(self, Model, type = 'LSTM'):
+    def postprocess(self, Model, postprocessing = 'LSTM', fit = False):
 
-        if type == 'LSTM':
+        if postprocessing == 'LSTM':
 
             test_user = self.shl_args.train_args['test_user']
 
@@ -1437,184 +1440,178 @@ class SignalsDataset:
             return train_predicted_sequences, train_true_sequences, val_predicted_sequences, val_true_sequences, test_predicted_sequences, test_true_sequences
 
 
-        if type == 'Gaussian':
-            positions = ['Torso',
-                          'Hips',
-                          'Bag',
-                          'Hand']
+        if postprocessing == 'Polynomial':
+            if fit:
 
-            acc_positions = self.shl_args.train_args['positions']
+                positions = ['Torso',
+                             'Hips',
+                             'Bag',
+                             'Hand']
 
-            bagged = self.shl_args.data_args['bagging']
-            size = self.shl_args.data_args['accBagSize'] if bagged else None
-            stride = self.shl_args.data_args['accBagStride'] if bagged else None
+                acc_positions = self.shl_args.train_args['positions']
 
-            test_user = self.shl_args.train_args['test_user']
-            trans_threshold = self.shl_args.train_args['transition_threshold']
-            self.transmat_forward = np.array([[0 for _ in range(self.n_labels)] for _ in range(self.n_labels)])
-            self.transmat_backward = np.array([[0 for _ in range(self.n_labels)] for _ in range(self.n_labels)])
+                bagged = self.shl_args.data_args['bagging']
+                size = self.shl_args.data_args['accBagSize'] if bagged else None
+                stride = self.shl_args.data_args['accBagStride'] if bagged else None
 
-            pred_probs = [[] for _ in range(self.n_labels)]
-            val_indices = np.array(self.val_indices)
+                trans_threshold = self.shl_args.train_args['transition_threshold']
 
-            for index, (label, day, time, user) in enumerate(zip(self.labels[:-1, 0],
-                                                      self.labels[:-1,-2],
-                                                      self.labels[:-1,-1],
-                                                      self.labels[:-1, -3])):
+                predicted = []
+                true = []
+                true_sequence = []
 
-                if index not in self.run_indices:
-                    if user != test_user:
+                length = 0
 
-                        if index in val_indices[:,0]:
-                            for pos_j,position in enumerate(acc_positions):
+                inputs = [[[] for _ in range(3)] for _ in range(len(acc_positions))]
+                classes = [i for i in range(self.n_labels)]
 
+                transition_mx = pd.DataFrame(
+                    np.zeros(shape=(self.n_labels,self.n_labels))
+                )
 
-                                transformedAccBag = self.accTfrm(copy.deepcopy(self.acceleration[self.acc_bags[index]])
-                                                                 , is_train=False,
-                                                                 position=position, bagged=bagged,
-                                                                 size=size, stride=stride)
+                for index, (label, day, time, user) in enumerate(zip(self.labels[:-1, 0],
+                                                                     self.labels[:-1, -2],
+                                                                     self.labels[:-1, -1],
+                                                                     self.labels[:-1, -3])):
+
+                    if index not in self.run_indices:
+
+                        if user == self.val_user:
+
+                            for pos_j, position in enumerate(acc_positions):
+
+                                transformedAccSignalsBag = self.accTfrm(
+                                    copy.deepcopy(self.acceleration[self.acc_bags[index]])
+                                    ,is_train=False,
+                                    position=position, bagged=bagged,
+                                    size=size, stride=stride
+                                )
 
                                 locBag = []
                                 for pos_i, position in enumerate(positions):
                                     locBag.append(copy.deepcopy(self.location[pos_i][self.loc_bags[position][index]]))
 
+                                transformedLocSignalsBag, transformedLocFeaturesBag = self.locTfrm(locBag, is_train=False)
+
+                                if pos_j == 0:
+                                    length += 1
+                                    true_sequence.append(label-1)
+
+                                inputs[pos_j][0].append(transformedAccSignalsBag)
+                                inputs[pos_j][1].append(transformedLocSignalsBag)
+                                inputs[pos_j][2].append(transformedLocFeaturesBag)
+
+
+                            if self.labels[index + 1][-1] - time > trans_threshold \
+                                    or self.labels[index + 1][-2] != day or self.labels[index + 1][-3] != user:
+
+
+
+                                for pos_j in range(len(acc_positions)):
+                                    print(true_sequence)
+                                    print(np.argmax(Model.call([np.array(inputs[pos_j][i]) for i in range(3)]), axis=1))
+                                    true.extend(true_sequence)
+                                    predicted.extend(np.argmax(Model.call([np.array(inputs[pos_j][i]) for i in range(3)]), axis=1))
+
+
+                                true_sequence = pd.DataFrame(true_sequence,columns=['label'])
+                                true_sequence['label_'] = true_sequence.shift(-1)
+
+                                groups = true_sequence.groupby(['label', 'label_'])
+                                counts = {i[0]: len(i[1]) for i in groups}
+
+                                matrix = pd.DataFrame()
+
+                                for x in classes:
+                                    matrix[x] = pd.Series([counts.get((x, y), 0) for y in classes], index=classes)
+
+
+                                transition_mx = transition_mx.add(matrix)
+
+
+                                inputs = [[[] for _ in range(3)] for _ in range(len(acc_positions))]
+                                true_sequence = []
+                                length = 0
+
+
+                confusion_mx = pd.DataFrame(sklearn.metrics.confusion_matrix(predicted,true))
+
+
+
+                return transition_mx, confusion_mx
+
+            else:
+                test_user = self.shl_args.train_args['test_user']
+
+                positions = ['Torso',
+                             'Hips',
+                             'Bag',
+                             'Hand']
+
+                acc_positions = self.shl_args.train_args['positions']
+
+                bagged = self.shl_args.data_args['bagging']
+                size = self.shl_args.data_args['accBagSize'] if bagged else None
+                stride = self.shl_args.data_args['accBagStride'] if bagged else None
+
+                trans_threshold = self.shl_args.train_args['transition_threshold']
+
+                predicted = []
+                true = []
+                true_sequence = []
+                lengths = []
+
+                length = 0
+
+                inputs = [[[] for _ in range(3)] for _ in range(len(acc_positions))]
+
+                for index, (label, day, time, user) in enumerate(zip(self.labels[:-1, 0],
+                                                                     self.labels[:-1, -2],
+                                                                     self.labels[:-1, -1],
+                                                                     self.labels[:-1, -3])):
+
+                    if index not in self.run_indices:
+
+                        if user == test_user:
+
+                            for pos_j, position in enumerate(acc_positions):
+
+                                transformedAccSignalsBag = self.accTfrm(
+                                    copy.deepcopy(self.acceleration[self.acc_bags[index]])
+                                    , is_train=False,
+                                    position=position, bagged=bagged,
+                                    size=size, stride=stride
+                                )
+
+                                locBag = []
+                                for pos_i, position in enumerate(positions):
+                                    locBag.append(copy.deepcopy(self.location[pos_i][self.loc_bags[position][index]]))
 
                                 transformedLocSignalsBag, transformedLocFeaturesBag = self.locTfrm(locBag, is_train=False)
 
+                                if pos_j == 0:
+                                    length += 1
+                                    true_sequence.append(label - 1)
 
-                                y_predicted = Model.call([np.array([transformedAccBag]), np.array([transformedLocSignalsBag]), np.array([transformedLocFeaturesBag])])
+                                inputs[pos_j][0].append(transformedAccSignalsBag)
+                                inputs[pos_j][1].append(transformedLocSignalsBag)
+                                inputs[pos_j][2].append(transformedLocFeaturesBag)
 
+                            if self.labels[index + 1][-1] - time > trans_threshold \
+                                    or self.labels[index + 1][-2] != day or self.labels[index + 1][-3] != user:
 
-                                pred_probs[label-1].append(y_predicted[0].numpy().tolist())
-
-
-
-                        if self.labels[index + 1][-1] - time < trans_threshold \
-                                and self.labels[index + 1][-2] == day\
-                                and self.labels[index + 1][-3] == user:
-                            self.transmat_forward[label-1][self.labels[index + 1][0]-1] += 1
-                            self.transmat_backward[self.labels[index + 1][0]-1][label-1] += 1
-
-            means = np.zeros((8,8))
-            covars = np.zeros((8,8,8))
-
-            for k,lb_probs in enumerate(pred_probs):
-                means[k] = np.mean(np.transpose(lb_probs),axis=1)
-                covars[k] = np.cov(lb_probs,rowvar=False)
+                                for pos_j in range(len(acc_positions)):
+                                    true.extend(true_sequence)
+                                    predicted.extend(np.argmax(Model.call([np.array(inputs[pos_j][i]) for i in range(3)]), axis=1))
+                                    lengths.append(length)
 
 
-            print(means)
-            print(covars)
+                                inputs = [[[] for _ in range(3)] for _ in range(len(acc_positions))]
+                                true_sequence = []
+                                length = 0
 
 
-            transmat_forward = self.transmat_forward / self.transmat_forward.sum(axis=1)[:, np.newaxis]
-
-
-            hmmModel = hmm.GaussianHMM(n_components=self.n_labels, covariance_type='full')
-
-            hmmModel.startprob_ = [0.125 for _ in range(self.n_labels)]
-            hmmModel.transmat_ = transmat_forward
-            hmmModel.means_ = means
-            hmmModel.covars_ = covars
-
-
-
-
-
-            predicted_sequences = []
-            new_pd_sequences = [[] for _ in range(len(acc_positions))]
-            true_sequences = []
-            new_tr_sequences = [[] for _ in range(len(acc_positions))]
-
-            for index, (label, day, time, user) in enumerate(zip(self.labels[:-1, 0],
-                                                      self.labels[:-1,-2],
-                                                      self.labels[:-1,-1],
-                                                      self.labels[:-1, -3])):
-
-                if index not in self.run_indices:
-                    if user == test_user:
-
-                        for pos_j,position in enumerate(acc_positions):
-
-                            transformedAccBag = self.accTfrm(copy.deepcopy(self.acceleration[self.acc_bags[index]])
-                                                             , is_train=False,
-                                                             position=position, bagged=bagged,
-                                                             size=size, stride=stride)
-
-                            locBag = []
-                            for pos_i, position in enumerate(positions):
-                                locBag.append(copy.deepcopy(self.location[pos_i][self.loc_bags[position][index]]))
-
-
-                            transformedLocSignalsBag, transformedLocFeaturesBag = self.locTfrm(locBag, is_train=False)
-
-
-                            y_predicted = Model.call([np.array([transformedAccBag]), np.array([transformedLocSignalsBag]), np.array([transformedLocFeaturesBag])])
-
-
-                            new_pd_sequences[pos_j].append(y_predicted[0].numpy().tolist())
-                            new_tr_sequences[pos_j].append(label - 1)
-
-
-                        if self.labels[index + 1][-1] - time > trans_threshold \
-                                or self.labels[index + 1][-2] != day:
-
-                            for pd_sequence, tr_sequence in zip(new_pd_sequences,new_tr_sequences):
-
-
-                                q, hmm_sequence = hmmModel.decode(pd_sequence)
-
-                                print(np.argmax(pd_sequence,axis=1))
-                                print(hmm_sequence)
-                                print(np.array(tr_sequence))
-                                print(q)
-                                print()
-
-
-
-                            new_pd_sequences = [[] for _ in range(len(acc_positions))]
-                            new_tr_sequences = [[] for _ in range(len(acc_positions))]
-
-
-
-            #
-            # train_sequences = []
-            # for l in range(n_seqs//2):
-            #     train_sequences.extend(predicted_sequences[l])
-            #
-            # print(np.argmax(train_sequences,axis=1))
-            # train_lengths = lengths[:n_seqs // 2]
-            #
-            # test_sequences = []
-            # for l in range(n_seqs//2,len(predicted_sequences)):
-            #     test_sequences.extend(predicted_sequences[l])
-            #
-            # print(np.argmax(test_sequences, axis=1))
-            # test_lengths = lengths[n_seqs // 2:]
-            #
-            # n_predicted_sequences = []
-            # for l in range(len(predicted_sequences)):
-            #     n_predicted_sequences.extend(predicted_sequences[l])
-            # predicted_sequences = n_predicted_sequences
-            #
-            # models = list()
-            # scores = list()
-            #
-            # for r_s in range(30):
-            #     hmmModel = hmm.GMMHMM(n_components=self.n_labels, covariance_type='full', n_iter=100, random_state=r_s)
-            #     hmmModel.fit(train_sequences, lengths = train_lengths)
-            #     models.append(hmmModel)
-            #     scores.append(hmmModel.score(test_sequences, lengths = test_lengths))
-            #     print(scores)
-            #
-            # hmmModel = models[np.argmax(scores)]
-            # hmm_sequences = hmmModel.predict(predicted_sequences, lengths = lengths)
-            # for pd_sequence, tr_sequence, hmm_sequence in zip(predicted_sequences,true_sequences, hmm_sequences):
-            #     print(pd_sequence)
-            #     print(np.argmax(pd_sequence),tr_sequence,hmm_sequence)
-            #
-
-            return predicted_sequences, true_sequences
+                return predicted, true, lengths
 
     def drop_run(self):
 
@@ -1843,7 +1840,7 @@ class SignalsDataset:
 
 
 
-    def __call__(self, baseline = False, simCLR = False, accTransfer = False, locTransfer = False, randomTree = False, postprocess = False, round = True, DHMM = False):
+    def __call__(self, baseline = False, simCLR = False, accTransfer = False, locTransfer = False, randomTree = False, user_seperated = False, round = True, DHMM = False):
 
         if randomTree:
 
@@ -1898,7 +1895,7 @@ class SignalsDataset:
                 self.drop_run()
 
 
-            self.split_train_val_test(user_seperated=postprocess, firstRound=round)
+            self.split_train_val_test(user_seperated=user_seperated, firstRound=round)
 
 
             if locTransfer:

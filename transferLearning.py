@@ -804,7 +804,7 @@ def fit(evaluation = True,
         summary = True,
         verbose = 1,
         use_simCLR = 'none',
-        postprocess = False,
+        user_seperated = False,
         round = True):
 
     if use_simCLR == 'train':
@@ -839,7 +839,7 @@ def fit(evaluation = True,
 
     train , val , test = SD(baseline = True,
                             accTransfer = True,
-                            postprocess=postprocess,
+                            user_seperated=user_seperated,
                             round=round)
 
     config_edit('train_args', 'accBagSize', accBagSize)

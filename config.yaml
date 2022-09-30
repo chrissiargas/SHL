@@ -1,20 +1,20 @@
 data_args:
-  accDuration: 50
-  accStride: 50
+  accDuration: 1200
+  accStride: 1200
   day: all   # [all, 1, 2, 3 ]
 
   dropnan: true
   dropnull: false
 
-  locDuration: 2 #samples
+  locDuration: 12 #samples
   locStride: 1 #samples
 
   path: E:\SHL\
 
   position: all # [all , Torso, Hips, Bag, Hand]
 
-  smpl_acc_period: 0.02 #original 0.01s
-  smpl_loc_period: 1 #original 1s
+  smpl_acc_period: 0.05 #original 0.01s
+  smpl_loc_period: 60 #original 1s
 
   src_path: E:\SHL\srcData\
 
@@ -38,13 +38,13 @@ data_args:
   percentageThreshold: 0.6 #if not hardLabelling
 
 
-  threshold: 1000 #ms
+  threshold: 10000 #ms
   dynamicWindow: true
 
-  pairThreshold: 2000 #ms
+  pairThreshold: 30000 #ms
   locPosition:      #belongs in {0, locDuration - 1}
 
-  bagging: false
+  bagging: true
   accBagSize: 3
   locBagSize: 1
   accBagStride: 400
@@ -56,7 +56,7 @@ data_args:
   gpsSignal: false
 train_args:
 
-  accBagSize: 1  #odd
+  accBagSize: 3  #odd
   accBagPivot:       #belongs between {0, accBagSize - 1}
 
   locBagSize: 1  #odd
@@ -67,7 +67,7 @@ train_args:
   bagStride: 1
   pair_threshold: 300000
 
-  val_percentage: 0.3         #used if stratify == concentrated
+  val_percentage: 0.15         #used if stratify == concentrated
 
   fusion: MIL    #[MIL, concat]
 
@@ -152,7 +152,7 @@ train_args:
   second_order: true
 
 
-  padding_threshold: 2 #2 for randomTree
+  padding_threshold: 12
   padding_method: masking #[variableLength, interpolation, masking]
   interpolation: quadratic   #[linear, quadratic, cubic]
   nullLoc: masking  #[deactivate, masking]
@@ -170,7 +170,7 @@ train_args:
   learning_rate: 0.0001
 
   epochs: 80
-  accEpochs: 80
+  accEpochs: 160
   locEpochs: 200
   simCLRepochs: 120
 
@@ -188,12 +188,12 @@ train_args:
   finetuning_learning_rate: 0.0000006
   finetuning_epochs: 5
 
-  random_tree: true
+  decision_tree: false
 
-  post_processing: true
-  post_processing_method: HMM
+  postprocessing: true
+  postprocessing_method: Polynomial #[LSTM, Polynomial, Gaussian]
 
-  transition_threshold: 200000
+  transition_threshold: 60000
 
 
 

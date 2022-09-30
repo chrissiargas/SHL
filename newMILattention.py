@@ -1709,11 +1709,14 @@ def get_focal_loss(gamma=2., alpha=.25):
 def MIL_fit(SignalsDataset,
             evaluation = True,
             summary = False,
-            verbose = 1,
-            postprocess = False,
-            randomForest = True):
+            verbose = 1):
 
-    if randomForest:
+    postprocessing = SignalsDataset.shl_args.train_args['postprocessing']
+    postprocessingMethod = SignalsDataset.shl_args.train_args['postprocessing_method']
+    decisionTree = SignalsDataset.shl_args.train_args['decision_tree']
+
+    if decisionTree:
+
         trainX, trainY, valX, valY, testX, testY = SignalsDataset(randomTree=True,DHMM=False)
 
 
@@ -1732,312 +1735,592 @@ def MIL_fit(SignalsDataset,
                 max_score = depth[1]
 
 
-        train_X = pd.concat([trainX,valX])
-        train_Y = pd.concat([trainY,valY])
+        # train_X = pd.concat([trainX,valX])
+        # train_Y = pd.concat([trainY,valY])
 
         clf = tree.DecisionTreeClassifier(max_depth=best_depth)
-        clf.fit(train_X,train_Y)
+        clf.fit(trainX,trainY)
         print(clf.score(testX,testY))
 
 
+        trainX, trainY, testX, testY, trans_mx = SignalsDataset(randomTree=True, DHMM=True)
 
-        trainX, trainY, testX, Y, trans_mx = SignalsDataset(randomTree=True, DHMM=True)
+        valY_ = clf.predict(valX)
 
-        testY_ = []
+        conf_mx = sklearn.metrics.confusion_matrix(valY_,valY)
+
+        discrete_model = hmm.MultinomialHMM(n_components=5,
+                           algorithm='viterbi',  # decoder algorithm.
+                           random_state=93,
+                           n_iter=10
+                           )
+
+        print(trans_mx)
+        print(conf_mx)
+
+        discrete_model.startprob_ = [1./5. for _ in range(5)]
+        discrete_model.transmat_ = trans_mx
+        discrete_model.emissionprob_ = conf_mx
+
+
+
+        X = []
+        Y = []
         lengths = []
-        for seq,seq_y in zip(testX,Y):
-            print(seq_y)
-            print(seq)
-            print(clf.predict_proba(seq))
-            testY_.extend(clf.predict_proba(seq))
+        for seq,seq_y in zip(testX,testY):
+            # print(seq_y)
+            # print(seq)
+            # print(clf.predict_proba(seq))
+            X.extend(clf.predict_proba(seq))
             lengths.append(len(seq))
+            Y.extend(seq_y['label'].to_list())
 
 
-        hmm_model = hmm.GaussianHMM(5, 'full', n_iter=50)
-        hmm_model.fit(testY_, lengths = lengths)
-        Y_ = hmm_model.predict(testY_)
+        Y_ = discrete_model.predict(X,lengths = lengths)
+        score = sklearn.metrics.accuracy_score(Y,Y_)
 
-        print(sklearn.metrics.accuracy_score(testY,Y_))
-
-        for seq,seq_y in zip(Y_,testY):
-            print(seq_y)
-            print(seq)
+        print(score)
 
 
 
 
 
 
-    if postprocess:
+    elif postprocessing:
 
-        postprocess_Model = keras.Sequential()
+        if postprocessingMethod == 'LSTM':
+            postprocess_Model = keras.Sequential()
 
-        for postprocess in [True,False]:
+            for postprocess in [True,False]:
 
-            rounds = [True,False] if postprocess else [True]
-            for round in rounds:
-                L = 256
-                D = 128
+                rounds = [True,False] if postprocess else [True]
+                for round in rounds:
+                    L = 256
+                    D = 128
 
 
-                if SignalsDataset.shl_args.train_args['transfer_learning_loc'] == 'train':
+                    if SignalsDataset.shl_args.train_args['transfer_learning_loc'] == 'train':
 
-                    saved_model_loc = locTransferLearning.fit(
-                        evaluation=evaluation,
-                        summary=summary,
-                        verbose=verbose,
-                        L=L
+                        saved_model_loc = locTransferLearning.fit(
+                            evaluation=evaluation,
+                            summary=summary,
+                            verbose=verbose,
+                            L=L
+                        )
+
+                    elif SignalsDataset.shl_args.train_args['transfer_learning_loc'] == 'load':
+
+                        save_dir = os.path.join('training', 'saved_models')
+                        if not os.path.isdir(save_dir):
+                            return
+
+                        model_type = 'location_classifier'
+                        model_name = 'shl_%s_model.h5' % model_type
+                        filepath = os.path.join(save_dir, model_name)
+
+                        saved_model_loc = filepath
+
+                    else:
+
+                        saved_model_loc = None
+
+
+                    if SignalsDataset.shl_args.train_args['transfer_learning_acc'] == 'train':
+
+                        saved_model_acc = transferLearning.fit(
+                            evaluation = evaluation,
+                            L = L,
+                            summary = summary,
+                            verbose = verbose,
+                            use_simCLR = SignalsDataset.shl_args.train_args['simCLR'],
+                            postprocess = postprocess,
+                            round = round
+                        )
+
+                    elif SignalsDataset.shl_args.train_args['transfer_learning_acc'] == 'load':
+                        save_dir = os.path.join('training', 'saved_models')
+                        if not os.path.isdir(save_dir):
+                            return
+
+                        model_type = 'acceleration_classifier'
+                        model_name = 'shl_%s_model.h5' % model_type
+                        filepath = os.path.join(save_dir, model_name)
+                        saved_model_acc = filepath
+
+                    else:
+
+                        saved_model_acc = None
+
+                    fusion = SignalsDataset.shl_args.train_args['fusion']
+                    train , val , test = SignalsDataset(postprocess = postprocess, round = round)
+
+                    user = SignalsDataset.shl_args.train_args['test_user']
+
+                    logdir = os.path.join('logs_user' + str(user),'MIL_tensorboard')
+
+                    try:
+                        shutil.rmtree(logdir)
+                    except OSError as e:
+                        print("Error: %s - %s." % (e.filename, e.strerror))
+
+                    tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
+
+                    val_steps = SignalsDataset.valSize // SignalsDataset.valBatchSize
+
+                    if SignalsDataset.padding_method == 'variableLength':
+                        train_steps = SignalsDataset.batches
+
+                    else:
+                        train_steps = SignalsDataset.trainSize // SignalsDataset.trainBatchSize
+
+                    test_steps = SignalsDataset.testSize // SignalsDataset.testBatchSize
+
+
+
+                    if SignalsDataset.shl_args.train_args['loss_function'] == 'weighted':
+
+                        N = SignalsDataset.trainSize
+
+                        lb_count = np.zeros(SignalsDataset.n_labels)
+
+                        for index in SignalsDataset.train_indices:
+                            lb_count = lb_count + SignalsDataset.lbsTfrm(SignalsDataset.labels[index, 0])
+
+                        Wp = tf.convert_to_tensor(N / (2. * lb_count), tf.float32)
+                        Wn = tf.convert_to_tensor(N / (2. * ( N - lb_count )), tf.float32)
+
+                        loss_function = get_loss_function(Wp, Wn)
+
+                    elif SignalsDataset.shl_args.train_args['loss_function'] == 'focal':
+                        loss_function = get_focal_loss()
+
+                    else:
+                        loss_function = keras.losses.CategoricalCrossentropy()
+
+
+
+                    Model = newMILattention(input_shapes = SignalsDataset.inputShape,
+                                            args = SignalsDataset.shl_args,
+                                            loss_function = loss_function,
+                                            L = L, D = D,
+                                            acc_weights = saved_model_acc,
+                                            loc_weights = saved_model_loc,
+                                            fusion = fusion)
+
+
+                    Model.compile(
+                        optimizer = keras.optimizers.Adam(learning_rate=SignalsDataset.shl_args.train_args['learning_rate'])
                     )
 
-                elif SignalsDataset.shl_args.train_args['transfer_learning_loc'] == 'load':
+                    val_metrics = valMetrics(val,
+                                             SignalsDataset.valBatchSize,
+                                             val_steps)
 
-                    save_dir = os.path.join('training', 'saved_models')
-                    if not os.path.isdir(save_dir):
-                        return
-
-                    model_type = 'location_classifier'
-                    model_name = 'shl_%s_model.h5' % model_type
-                    filepath = os.path.join(save_dir, model_name)
-
-                    saved_model_loc = filepath
-
-                else:
-
-                    saved_model_loc = None
-
-
-                if SignalsDataset.shl_args.train_args['transfer_learning_acc'] == 'train':
-
-                    saved_model_acc = transferLearning.fit(
-                        evaluation = evaluation,
-                        L = L,
-                        summary = summary,
-                        verbose = verbose,
-                        use_simCLR = SignalsDataset.shl_args.train_args['simCLR'],
-                        postprocess = postprocess,
-                        round = round
-                    )
-
-                elif SignalsDataset.shl_args.train_args['transfer_learning_acc'] == 'load':
-                    save_dir = os.path.join('training', 'saved_models')
-                    if not os.path.isdir(save_dir):
-                        return
-
-                    model_type = 'acceleration_classifier'
-                    model_name = 'shl_%s_model.h5' % model_type
-                    filepath = os.path.join(save_dir, model_name)
-                    saved_model_acc = filepath
-
-                else:
-
-                    saved_model_acc = None
-
-                fusion = SignalsDataset.shl_args.train_args['fusion']
-                train , val , test = SignalsDataset(postprocess = postprocess, round = round)
-
-                user = SignalsDataset.shl_args.train_args['test_user']
-
-                logdir = os.path.join('logs_user' + str(user),'MIL_tensorboard')
-
-                try:
-                    shutil.rmtree(logdir)
-                except OSError as e:
-                    print("Error: %s - %s." % (e.filename, e.strerror))
-
-                tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
-
-                val_steps = SignalsDataset.valSize // SignalsDataset.valBatchSize
-
-                if SignalsDataset.padding_method == 'variableLength':
-                    train_steps = SignalsDataset.batches
-
-                else:
-                    train_steps = SignalsDataset.trainSize // SignalsDataset.trainBatchSize
-
-                test_steps = SignalsDataset.testSize // SignalsDataset.testBatchSize
-
-
-
-                if SignalsDataset.shl_args.train_args['loss_function'] == 'weighted':
-
-                    N = SignalsDataset.trainSize
-
-                    lb_count = np.zeros(SignalsDataset.n_labels)
-
-                    for index in SignalsDataset.train_indices:
-                        lb_count = lb_count + SignalsDataset.lbsTfrm(SignalsDataset.labels[index, 0])
-
-                    Wp = tf.convert_to_tensor(N / (2. * lb_count), tf.float32)
-                    Wn = tf.convert_to_tensor(N / (2. * ( N - lb_count )), tf.float32)
-
-                    loss_function = get_loss_function(Wp, Wn)
-
-                elif SignalsDataset.shl_args.train_args['loss_function'] == 'focal':
-                    loss_function = get_focal_loss()
-
-                else:
-                    loss_function = keras.losses.CategoricalCrossentropy()
-
-
-
-                Model = newMILattention(input_shapes = SignalsDataset.inputShape,
-                                        args = SignalsDataset.shl_args,
-                                        loss_function = loss_function,
-                                        L = L, D = D,
-                                        acc_weights = saved_model_acc,
-                                        loc_weights = saved_model_loc,
-                                        fusion = fusion)
-
-
-                Model.compile(
-                    optimizer = keras.optimizers.Adam(learning_rate=SignalsDataset.shl_args.train_args['learning_rate'])
-                )
-
-                val_metrics = valMetrics(val,
-                                         SignalsDataset.valBatchSize,
-                                         val_steps)
-
-                file_writer_val = tf.summary.create_file_writer(logdir + '/cm_val')
-                file_writer_test = tf.summary.create_file_writer(logdir + '/cm_test')
-                w_file_writer_val = tf.summary.create_file_writer(logdir + '/wm_val')
-                w_file_writer_test = tf.summary.create_file_writer(logdir + '/wm_test')
-
-                if fusion == 'MIL':
-                    val_cm = confusion_metric(val,
-                                              SignalsDataset.valBatchSize,
-                                              SignalsDataset.shl_args.train_args['accBagSize'],
-                                              SignalsDataset.shl_args.train_args['locBagSize'],
-                                              val_steps,
-                                              file_writer_val,
-                                              w_file_writer_val,
-                                              drop_run = SignalsDataset.shl_args.train_args['drop_run'])
-
-                save_dir = os.path.join('training','saved_models')
-                if not os.path.isdir(save_dir):
-                    os.makedirs(save_dir)
-
-
-                model_type = 'MILattention'
-                model_name = 'shl_%s_model.h5' %model_type
-                filepath = os.path.join(save_dir, model_name)
-
-                save_model = keras.callbacks.ModelCheckpoint(
-                            filepath = filepath,
-                            monitor = 'val_Loss',
-                            verbose = 1,
-                            save_best_only = True,
-                            mode = 'min',
-                            save_weights_only=True
-                    )
-
-                early_stopping = keras.callbacks.EarlyStopping(
-                    monitor = 'val_Loss',
-                    min_delta = 0,
-                    patience = 30,
-                    mode = 'min',
-                    verbose = 1
-                )
-
-                reduce_lr_plateau = keras.callbacks.ReduceLROnPlateau(
-                    monitor = 'val_Loss',
-                    factor = 0.4,
-                    patience = 10,
-                    verbose = 1,
-                    mode = 'min'
-                )
-
-                if summary:
-                    print(Model.summary())
-
-                if fusion == 'MIL':
-                    callbacks = [tensorboard_callback,
-                                 val_metrics,val_cm,
-                                 save_model,
-                                 early_stopping,
-                                 reduce_lr_plateau]
-
-                elif fusion == 'concat':
-                    callbacks = [tensorboard_callback,
-                                 val_metrics,
-                                 save_model,
-                                 early_stopping,
-                                 reduce_lr_plateau]
-
-                Model.fit(
-                    train,
-                    epochs=SignalsDataset.shl_args.train_args['epochs'],
-                    steps_per_epoch = train_steps,
-                    validation_data = val,
-                    validation_steps = val_steps,
-                    callbacks = callbacks,
-                    use_multiprocessing=True,
-                    verbose=verbose
-                )
-
-                if SignalsDataset.padding_method == 'variableLength':
-                    Model.built = True
-
-
-
-                Model.load_weights(filepath)
-                Model.acc_encoder.trainable = True
-                Model.loc_encoder.trainable = True
-                Model.save_weights(filepath)
-
-                if evaluation:
-
-                    test_metrics = testMetrics(test,SignalsDataset.testBatchSize,test_steps)
+                    file_writer_val = tf.summary.create_file_writer(logdir + '/cm_val')
+                    file_writer_test = tf.summary.create_file_writer(logdir + '/cm_test')
+                    w_file_writer_val = tf.summary.create_file_writer(logdir + '/wm_val')
+                    w_file_writer_test = tf.summary.create_file_writer(logdir + '/wm_test')
 
                     if fusion == 'MIL':
-                        test_cm = testConfusionMetric(test,
-                                                      SignalsDataset.testBatchSize,
-                                                      SignalsDataset.shl_args.train_args['accBagSize'],
-                                                      SignalsDataset.shl_args.train_args['locBagSize'],
-                                                      test_steps,
-                                                      file_writer_test,
-                                                      w_file_writer_test,
-                                                      drop_run = SignalsDataset.shl_args.train_args['drop_run'])
+                        val_cm = confusion_metric(val,
+                                                  SignalsDataset.valBatchSize,
+                                                  SignalsDataset.shl_args.train_args['accBagSize'],
+                                                  SignalsDataset.shl_args.train_args['locBagSize'],
+                                                  val_steps,
+                                                  file_writer_val,
+                                                  w_file_writer_val,
+                                                  drop_run = SignalsDataset.shl_args.train_args['drop_run'])
+
+                    save_dir = os.path.join('training','saved_models')
+                    if not os.path.isdir(save_dir):
+                        os.makedirs(save_dir)
+
+
+                    model_type = 'MILattention'
+                    model_name = 'shl_%s_model.h5' %model_type
+                    filepath = os.path.join(save_dir, model_name)
+
+                    save_model = keras.callbacks.ModelCheckpoint(
+                                filepath = filepath,
+                                monitor = 'val_Loss',
+                                verbose = 1,
+                                save_best_only = True,
+                                mode = 'min',
+                                save_weights_only=True
+                        )
+
+                    early_stopping = keras.callbacks.EarlyStopping(
+                        monitor = 'val_Loss',
+                        min_delta = 0,
+                        patience = 30,
+                        mode = 'min',
+                        verbose = 1
+                    )
+
+                    reduce_lr_plateau = keras.callbacks.ReduceLROnPlateau(
+                        monitor = 'val_Loss',
+                        factor = 0.4,
+                        patience = 10,
+                        verbose = 1,
+                        mode = 'min'
+                    )
+
+                    if summary:
+                        print(Model.summary())
 
                     if fusion == 'MIL':
-                        callbacks = [test_metrics, test_cm]
+                        callbacks = [tensorboard_callback,
+                                     val_metrics,val_cm,
+                                     save_model,
+                                     early_stopping,
+                                     reduce_lr_plateau]
 
                     elif fusion == 'concat':
-                        callbacks = [test_metrics]
-                    Model.evaluate(test,steps=test_steps,callbacks=callbacks)
+                        callbacks = [tensorboard_callback,
+                                     val_metrics,
+                                     save_model,
+                                     early_stopping,
+                                     reduce_lr_plateau]
 
-                if postprocess:
-
-                    train_x, train_y, val_x, val_y, test_x, test_y = SignalsDataset.get_seq_lbs(Model)
-
-
-                    train_steps = len(train_x)
-                    val_steps = len(val_x)
-                    test_steps = len(test_x)
-
-                    train = SignalsDataset.to_seq_generator(train_x, train_y)
-                    val = SignalsDataset.to_seq_generator(val_x, val_y)
-                    test = SignalsDataset.to_seq_generator(test_x, test_y)
-
-                    train = SignalsDataset.seqs_batch_and_prefetch(train)
-                    val = SignalsDataset.seqs_batch_and_prefetch(val)
-                    test = SignalsDataset.seqs_batch_and_prefetch(test)
-
-                    postprocess_Model = postprocessModel(
-                        input_shapes=[[None, 8], [None, 8]]
+                    Model.fit(
+                        train,
+                        epochs=SignalsDataset.shl_args.train_args['epochs'],
+                        steps_per_epoch = train_steps,
+                        validation_data = val,
+                        validation_steps = val_steps,
+                        callbacks = callbacks,
+                        use_multiprocessing=True,
+                        verbose=verbose
                     )
 
-                    postprocess_Model.compile(
-                        optimizer=keras.optimizers.Adam(learning_rate=0.001)
+                    if SignalsDataset.padding_method == 'variableLength':
+                        Model.built = True
+
+
+
+                    Model.load_weights(filepath)
+                    Model.acc_encoder.trainable = True
+                    Model.loc_encoder.trainable = True
+                    Model.save_weights(filepath)
+
+                    if evaluation:
+
+                        test_metrics = testMetrics(test,SignalsDataset.testBatchSize,test_steps)
+
+                        if fusion == 'MIL':
+                            test_cm = testConfusionMetric(test,
+                                                          SignalsDataset.testBatchSize,
+                                                          SignalsDataset.shl_args.train_args['accBagSize'],
+                                                          SignalsDataset.shl_args.train_args['locBagSize'],
+                                                          test_steps,
+                                                          file_writer_test,
+                                                          w_file_writer_test,
+                                                          drop_run = SignalsDataset.shl_args.train_args['drop_run'])
+
+                        if fusion == 'MIL':
+                            callbacks = [test_metrics, test_cm]
+
+                        elif fusion == 'concat':
+                            callbacks = [test_metrics]
+                        Model.evaluate(test,steps=test_steps,callbacks=callbacks)
+
+                    if postprocess:
+
+                        train_x, train_y, val_x, val_y, test_x, test_y = SignalsDataset.get_seq_lbs(Model)
+
+
+                        train_steps = len(train_x)
+                        val_steps = len(val_x)
+                        test_steps = len(test_x)
+
+                        train = SignalsDataset.to_seq_generator(train_x, train_y)
+                        val = SignalsDataset.to_seq_generator(val_x, val_y)
+                        test = SignalsDataset.to_seq_generator(test_x, test_y)
+
+                        train = SignalsDataset.seqs_batch_and_prefetch(train)
+                        val = SignalsDataset.seqs_batch_and_prefetch(val)
+                        test = SignalsDataset.seqs_batch_and_prefetch(test)
+
+                        postprocess_Model = postprocessModel(
+                            input_shapes=[[None, 8], [None, 8]]
+                        )
+
+                        postprocess_Model.compile(
+                            optimizer=keras.optimizers.Adam(learning_rate=0.001)
+                        )
+
+                        # save_model = keras.callbacks.ModelCheckpoint(
+                        #     filepath=filepath,
+                        #     monitor='val_loss',
+                        #     verbose=1,
+                        #     save_best_only=True,
+                        #     mode='min',
+                        #     save_weights_only=True
+                        # )
+
+                        early_stopping = keras.callbacks.EarlyStopping(
+                            monitor='val_Loss',
+                            min_delta=0,
+                            patience=30,
+                            mode='min',
+                            verbose=1
+                        )
+
+                        reduce_lr_plateau = keras.callbacks.ReduceLROnPlateau(
+                            monitor='val_Loss',
+                            factor=0.4,
+                            patience=10,
+                            verbose=1,
+                            mode='min'
+                        )
+
+                        print(postprocess_Model.summary())
+
+                        postprocess_Model.fit(
+                            train,
+                            validation_data=val,
+                            epochs=80,
+                            steps_per_epoch=train_steps,
+                            validation_steps=val_steps,
+                            verbose=True,
+                            use_multiprocessing=True,
+                            callbacks=[
+                                reduce_lr_plateau,
+                                early_stopping
+                            ]
+                        )
+
+                        postprocess_Model.evaluate(
+                            test,
+                            steps=test_steps,
+                            batch_size=1,
+                            verbose=True,
+                            use_multiprocessing=True
+                        )
+
+
+
+
+                    finetuning = SignalsDataset.shl_args.train_args['finetuning']
+
+                    if finetuning:
+
+                        fn_lr = SignalsDataset.shl_args.train_args['finetuning_learning_rate']
+                        fn_epochs = SignalsDataset.shl_args.train_args['finetuning_epochs']
+
+                        logdir = os.path.join('logs_user' + str(user), 'finetuning_MIL_tensorboard')
+
+                        try:
+                            shutil.rmtree(logdir)
+                        except OSError as e:
+                            print("Error: %s - %s." % (e.filename, e.strerror))
+
+                        tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
+
+                        val_metrics = valMetrics(val,
+                                                 SignalsDataset.valBatchSize,
+                                                 val_steps)
+
+                        file_writer_val = tf.summary.create_file_writer(logdir + '/cm_val')
+                        file_writer_test = tf.summary.create_file_writer(logdir + '/cm_test')
+
+                        val_cm = confusion_metric(val,
+                                                  SignalsDataset.valBatchSize,
+                                                  val_steps,
+                                                  file_writer_val,
+                                                  w_file_writer_val,
+                                                  drop_run=SignalsDataset.shl_args.train_args['drop_run'])
+
+                        Model.acc_encoder.trainable = True
+                        Model.loc_encoder.trainable = True
+
+                        Model.compile(
+                            optimizer = keras.optimizers.Adam(learning_rate = fn_lr)
+                        )
+
+                        Model.fit(
+                            train,
+                            epochs = fn_epochs,
+                            steps_per_epoch = train_steps,
+                            validation_data = val,
+                            validation_steps = val_steps,
+                            callbacks = [tensorboard_callback,
+                                         val_metrics,val_cm,
+                                         save_model],
+                            use_multiprocessing=True,
+                            verbose=verbose
+                        )
+
+                        Model.load_weights(filepath)
+
+                        if evaluation:
+
+                            test_cm = testConfusionMetric(test,
+                                                          SignalsDataset.testBatchSize,
+                                                          test_steps,
+                                                          file_writer_test,
+                                                          w_file_writer_test,
+                                                          drop_run=SignalsDataset.shl_args.train_args['drop_run'])
+
+                            Model.evaluate(test, steps=test_steps, callbacks=[test_cm])
+
+            return Model, postprocess_Model
+
+        elif postprocessingMethod == 'Polynomial':
+            trans_mx = pd.DataFrame(
+                        np.zeros(shape=(SignalsDataset.n_labels,SignalsDataset.n_labels))
+                    )
+            conf_mx = pd.DataFrame(
+                        np.zeros(shape=(SignalsDataset.n_labels,SignalsDataset.n_labels))
+                    )
+            for user_seperated in [True,False]:
+                rounds = [True,False] if user_seperated else True
+                for round in rounds:
+                    L = 256
+                    D = 128
+
+                    if SignalsDataset.shl_args.train_args['transfer_learning_loc'] == 'train':
+
+                        saved_model_loc = locTransferLearning.fit(
+                            evaluation=evaluation,
+                            summary=summary,
+                            verbose=verbose,
+                            L=L
+                        )
+
+                    elif SignalsDataset.shl_args.train_args['transfer_learning_loc'] == 'load':
+
+                        save_dir = os.path.join('training', 'saved_models')
+                        if not os.path.isdir(save_dir):
+                            return
+
+                        model_type = 'location_classifier'
+                        model_name = 'shl_%s_model.h5' % model_type
+                        filepath = os.path.join(save_dir, model_name)
+
+                        saved_model_loc = filepath
+
+                    else:
+
+                        saved_model_loc = None
+
+                    if SignalsDataset.shl_args.train_args['transfer_learning_acc'] == 'train':
+
+                        saved_model_acc = transferLearning.fit(
+                            evaluation=evaluation,
+                            L=L,
+                            summary=summary,
+                            verbose=verbose,
+                            use_simCLR=SignalsDataset.shl_args.train_args['simCLR'],
+                            user_seperated=user_seperated,
+                            round = round
+                        )
+
+                    elif SignalsDataset.shl_args.train_args['transfer_learning_acc'] == 'load':
+                        save_dir = os.path.join('training', 'saved_models')
+                        if not os.path.isdir(save_dir):
+                            return
+
+                        model_type = 'acceleration_classifier'
+                        model_name = 'shl_%s_model.h5' % model_type
+                        filepath = os.path.join(save_dir, model_name)
+                        saved_model_acc = filepath
+
+                    else:
+
+                        saved_model_acc = None
+
+                    fusion = SignalsDataset.shl_args.train_args['fusion']
+                    train, val, test = SignalsDataset(user_seperated = user_seperated, round = round)
+
+                    user = SignalsDataset.shl_args.train_args['test_user']
+
+                    logdir = os.path.join('logs_user' + str(user), 'MIL_tensorboard')
+
+                    try:
+                        shutil.rmtree(logdir)
+                    except OSError as e:
+                        print("Error: %s - %s." % (e.filename, e.strerror))
+
+                    tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
+
+                    val_steps = SignalsDataset.valSize // SignalsDataset.valBatchSize
+
+                    if SignalsDataset.padding_method == 'variableLength':
+                        train_steps = SignalsDataset.batches
+
+                    else:
+                        train_steps = SignalsDataset.trainSize // SignalsDataset.trainBatchSize
+
+                    test_steps = SignalsDataset.testSize // SignalsDataset.testBatchSize
+
+                    if SignalsDataset.shl_args.train_args['loss_function'] == 'weighted':
+
+                        N = SignalsDataset.trainSize
+
+                        lb_count = np.zeros(SignalsDataset.n_labels)
+
+                        for index in SignalsDataset.train_indices:
+                            lb_count = lb_count + SignalsDataset.lbsTfrm(SignalsDataset.labels[index, 0])
+
+                        Wp = tf.convert_to_tensor(N / (2. * lb_count), tf.float32)
+                        Wn = tf.convert_to_tensor(N / (2. * (N - lb_count)), tf.float32)
+
+                        loss_function = get_loss_function(Wp, Wn)
+
+                    elif SignalsDataset.shl_args.train_args['loss_function'] == 'focal':
+                        loss_function = get_focal_loss()
+
+                    else:
+                        loss_function = keras.losses.CategoricalCrossentropy()
+
+                    Model = newMILattention(input_shapes=SignalsDataset.inputShape,
+                                            args=SignalsDataset.shl_args,
+                                            loss_function=loss_function,
+                                            L=L, D=D,
+                                            acc_weights=saved_model_acc,
+                                            loc_weights=saved_model_loc,
+                                            fusion=fusion)
+
+                    Model.compile(
+                        optimizer=keras.optimizers.Adam(learning_rate=SignalsDataset.shl_args.train_args['learning_rate'])
                     )
 
-                    # save_model = keras.callbacks.ModelCheckpoint(
-                    #     filepath=filepath,
-                    #     monitor='val_loss',
-                    #     verbose=1,
-                    #     save_best_only=True,
-                    #     mode='min',
-                    #     save_weights_only=True
-                    # )
+                    val_metrics = valMetrics(val,
+                                             SignalsDataset.valBatchSize,
+                                             val_steps)
+
+                    file_writer_val = tf.summary.create_file_writer(logdir + '/cm_val')
+                    file_writer_test = tf.summary.create_file_writer(logdir + '/cm_test')
+                    w_file_writer_val = tf.summary.create_file_writer(logdir + '/wm_val')
+                    w_file_writer_test = tf.summary.create_file_writer(logdir + '/wm_test')
+
+                    if fusion == 'MIL':
+                        val_cm = confusion_metric(val,
+                                                  SignalsDataset.valBatchSize,
+                                                  SignalsDataset.shl_args.train_args['accBagSize'],
+                                                  SignalsDataset.shl_args.train_args['locBagSize'],
+                                                  val_steps,
+                                                  file_writer_val,
+                                                  w_file_writer_val,
+                                                  drop_run=SignalsDataset.shl_args.train_args['drop_run'])
+
+                    save_dir = os.path.join('training', 'saved_models')
+                    if not os.path.isdir(save_dir):
+                        os.makedirs(save_dir)
+
+                    model_type = 'MILattention'
+                    model_name = 'shl_%s_model.h5' % model_type
+                    filepath = os.path.join(save_dir, model_name)
+
+                    save_model = keras.callbacks.ModelCheckpoint(
+                        filepath=filepath,
+                        monitor='val_Loss',
+                        verbose=1,
+                        save_best_only=True,
+                        mode='min',
+                        save_weights_only=True
+                    )
 
                     early_stopping = keras.callbacks.EarlyStopping(
                         monitor='val_Loss',
@@ -2055,94 +2338,103 @@ def MIL_fit(SignalsDataset,
                         mode='min'
                     )
 
-                    print(postprocess_Model.summary())
+                    if summary:
+                        print(Model.summary())
 
-                    postprocess_Model.fit(
-                        train,
-                        validation_data=val,
-                        epochs=80,
-                        steps_per_epoch=train_steps,
-                        validation_steps=val_steps,
-                        verbose=True,
-                        use_multiprocessing=True,
-                        callbacks=[
-                            reduce_lr_plateau,
-                            early_stopping
-                        ]
-                    )
+                    if fusion == 'MIL':
+                        callbacks = [tensorboard_callback,
+                                     val_metrics, val_cm,
+                                     save_model,
+                                     early_stopping,
+                                     reduce_lr_plateau]
 
-                    postprocess_Model.evaluate(
-                        test,
-                        steps=test_steps,
-                        batch_size=1,
-                        verbose=True,
-                        use_multiprocessing=True
-                    )
-
-
-
-
-                finetuning = SignalsDataset.shl_args.train_args['finetuning']
-
-                if finetuning:
-
-                    fn_lr = SignalsDataset.shl_args.train_args['finetuning_learning_rate']
-                    fn_epochs = SignalsDataset.shl_args.train_args['finetuning_epochs']
-
-                    logdir = os.path.join('logs_user' + str(user), 'finetuning_MIL_tensorboard')
-
-                    try:
-                        shutil.rmtree(logdir)
-                    except OSError as e:
-                        print("Error: %s - %s." % (e.filename, e.strerror))
-
-                    tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
-
-                    val_metrics = valMetrics(val,
-                                             SignalsDataset.valBatchSize,
-                                             val_steps)
-
-                    file_writer_val = tf.summary.create_file_writer(logdir + '/cm_val')
-                    file_writer_test = tf.summary.create_file_writer(logdir + '/cm_test')
-
-                    val_cm = confusion_metric(val,
-                                              SignalsDataset.valBatchSize,
-                                              val_steps,
-                                              file_writer_val,
-                                              w_file_writer_val,
-                                              drop_run=SignalsDataset.shl_args.train_args['drop_run'])
-
-                    Model.acc_encoder.trainable = True
-                    Model.loc_encoder.trainable = True
-
-                    Model.compile(
-                        optimizer = keras.optimizers.Adam(learning_rate = fn_lr)
-                    )
+                    elif fusion == 'concat':
+                        callbacks = [tensorboard_callback,
+                                     val_metrics,
+                                     save_model,
+                                     early_stopping,
+                                     reduce_lr_plateau]
 
                     Model.fit(
                         train,
-                        epochs = fn_epochs,
-                        steps_per_epoch = train_steps,
-                        validation_data = val,
-                        validation_steps = val_steps,
-                        callbacks = [tensorboard_callback,
-                                     val_metrics,val_cm,
-                                     save_model],
+                        epochs=SignalsDataset.shl_args.train_args['epochs'],
+                        steps_per_epoch=train_steps,
+                        validation_data=val,
+                        validation_steps=val_steps,
+                        callbacks=callbacks,
                         use_multiprocessing=True,
                         verbose=verbose
                     )
 
+                    if SignalsDataset.padding_method == 'variableLength':
+                        Model.built = True
+
                     Model.load_weights(filepath)
+                    Model.acc_encoder.trainable = True
+                    Model.loc_encoder.trainable = True
+                    Model.save_weights(filepath)
 
                     if evaluation:
 
-                        test_cm = testConfusionMetric(test,
-                                                      SignalsDataset.testBatchSize,
-                                                      test_steps,
-                                                      file_writer_test,
-                                                      w_file_writer_test,
-                                                      drop_run=SignalsDataset.shl_args.train_args['drop_run'])
+                        test_metrics = testMetrics(test, SignalsDataset.testBatchSize, test_steps)
 
-                        Model.evaluate(test, steps=test_steps, callbacks=[test_cm])
+                        if fusion == 'MIL':
+                            test_cm = testConfusionMetric(test,
+                                                          SignalsDataset.testBatchSize,
+                                                          SignalsDataset.shl_args.train_args['accBagSize'],
+                                                          SignalsDataset.shl_args.train_args['locBagSize'],
+                                                          test_steps,
+                                                          file_writer_test,
+                                                          w_file_writer_test,
+                                                          drop_run=SignalsDataset.shl_args.train_args['drop_run'])
 
-        return Model, postprocess_Model
+                        if fusion == 'MIL':
+                            callbacks = [test_metrics, test_cm]
+
+                        elif fusion == 'concat':
+                            callbacks = [test_metrics]
+                        Model.evaluate(test, steps=test_steps, callbacks=callbacks)
+
+                    if user_seperated:
+
+                        trans_mx_,conf_mx_ = SignalsDataset.postprocess(Model=Model, postprocessing='Polynomial', fit=user_seperated)
+                        trans_mx.add(trans_mx_)
+                        conf_mx.add(conf_mx_)
+
+                    else:
+
+                        trans_mx["sum"] = trans_mx.sum(axis=1)
+                        trans_mx = trans_mx.div(trans_mx["sum"], axis=0)
+                        trans_mx = trans_mx.drop(columns=['sum'])
+                        trans_mx = trans_mx.values.tolist()
+
+                        conf_mx["sum"] = conf_mx.sum(axis=1)
+                        conf_mx = conf_mx.div(conf_mx["sum"], axis=0)
+                        conf_mx = conf_mx.drop(columns=['sum'])
+                        conf_mx = conf_mx.values.tolist()
+
+                        startprob = [1. / SignalsDataset.n_labels for _ in range(SignalsDataset.n_labels)]
+
+                        x,y,lengths = SignalsDataset.postprocess(Model=Model, postprocessing=postprocessModel, fit=user_seperated)
+
+                        discrete_model = hmm.MultinomialHMM(n_components=SignalsDataset.n_labels,
+                                                            algorithm='viterbi',  # decoder algorithm.
+                                                            random_state=93,
+                                                            n_iter=10
+                                                            )
+
+                        print(trans_mx)
+                        print(conf_mx)
+                        print(startprob)
+
+                        discrete_model.startprob_ = startprob
+                        discrete_model.transmat_ = trans_mx
+                        discrete_model.emissionprob_ = conf_mx
+
+                        y_ = discrete_model.predict(x,lengths)
+                        score = sklearn.metrics.accuracy_score(y, y_)
+
+                        print(score)
+
+            return Model
+

@@ -274,7 +274,7 @@ SD = SignalsDataset()
 
 
 fusion = SD.shl_args.train_args['fusion']
-train, val, test = SD(postprocess=True, round=True)
+train, val, test = SD(user_seperated=True, round=True)
 
 
 
@@ -345,54 +345,23 @@ Model.compile(
     optimizer=keras.optimizers.Adam(learning_rate=SD.shl_args.train_args['learning_rate'])
 )
 
-save_dir = os.path.join('training', 'saved_models')
-model_type = 'MILattention'
-model_name = 'shl_%s_model.h5' % model_type
-filepath = os.path.join(save_dir, model_name)
-
-
-
-Model.built = True
-Model.acc_encoder.trainable = True
-Model.loc_encoder.trainable = True
-Model.load_weights(filepath)
+# save_dir = os.path.join('training', 'saved_models')
+# model_type = 'MILattention'
+# model_name = 'shl_%s_model.h5' % model_type
+# filepath = os.path.join(save_dir, model_name)
+#
+#
+#
+# Model.built = True
+# Model.acc_encoder.trainable = True
+# Model.loc_encoder.trainable = True
+# Model.load_weights(filepath)
 
 # test_steps = SD.testSize // SD.testBatchSize
 # Model.evaluate(test,steps=test_steps)
 
-train_x, train_y, val_x, val_y, test_x, test_y = SD.get_seq_lbs(Model)
+trans,conf = SD.get_seq_lbs(Model,type ='Polynomial',fit=True)
 
-# print(train_seqs)
-# print(val_seqs)
-# print(test_seqs)
-
-train_steps = len(train_x)
-val_steps = len(val_x)
-test_steps = len(test_x)
-
-train = SD.to_seq_generator(train_x, train_y)
-val = SD.to_seq_generator(val_x, val_y)
-test = SD.to_seq_generator(test_x, test_y)
-
-train = SD.seqs_batch_and_prefetch(train)
-val = SD.seqs_batch_and_prefetch(val)
-test = SD.seqs_batch_and_prefetch(test)
-
-for seq in test.take(2):
-    x,y = seq
-    x1,x2 = x
-    print(x1)
-    print(x2)
-    print(y)
-    print()
-
-postprocess_Model = postprocessModel(
-    input_shapes = [[None,8],[None,8]]
-)
-
-postprocess_Model.compile(
-    optimizer=keras.optimizers.Adam(learning_rate=0.0001)
-)
 
 
 # save_model = keras.callbacks.ModelCheckpoint(
@@ -404,25 +373,6 @@ postprocess_Model.compile(
 #     save_weights_only=True
 # )
 
-print(postprocess_Model.summary())
-
-postprocess_Model.fit(
-    train,
-    validation_data=val,
-    epochs=160,
-    steps_per_epoch=train_steps,
-    validation_steps=val_steps,
-    verbose=True,
-    use_multiprocessing=True
-)
-
-postprocess_Model.evaluate(
-    test,
-    steps=test_steps,
-    batch_size=1,
-    verbose=True,
-    use_multiprocessing=True
-)
 
 #
 #
